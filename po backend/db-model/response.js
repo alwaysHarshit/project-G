@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 const responseSchema = new mongoose.Schema({
-    questionId: {type: mongoose.Schema.Types.ObjectId, ref: "Question", required: true},
+    questionId: {type: mongoose.Schema.Types.ObjectId, ref: "requestSchema", required: true},
     model: {type: String, default: "Gemini"},
 
     feedback: {
@@ -29,4 +29,4 @@ const responseSchema = new mongoose.Schema({
 
 }, {timestamps: true});
 
-export default mongoose.model("Response", responseSchema);
+export const Response=mongoose.model("Response", responseSchema);
