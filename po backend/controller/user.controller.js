@@ -73,7 +73,9 @@ export const userController = async (req, res) => {
         });
 
         res.status(200).json({
-            message: "AI model executed successfully",
+            model: "gemini-2.0-flash",
+            feedback: user.feedback,
+            score: user.score
         });
     } catch (error) {
         console.log("❌ Error in userController:", error);

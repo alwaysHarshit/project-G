@@ -1,104 +1,197 @@
-import React from 'react';
+import React, { useState } from "react";
+import axios from "axios";
+const initialInput = {
+  number: "",
+  name: "",
+  description: "",
+  topics: "",
+  difficulty: "",
+  code: "",
+};
 
-const Sidebar = () => (
-  <aside className="w-56 bg-white border-r border-gray-200 h-screen p-4 flex flex-col">
-    <div className="font-bold text-lg mb-4">Sidebar</div>
-    <div className="mb-6 flex flex-col items-center">
-      <div className="w-12 h-12 rounded-full bg-gray-200 mb-2" />
-      <div className="text-sm font-medium">User Name</div>
-    </div>
-    <input
-      type="text"
-      placeholder="Search..."
-      className="mb-4 px-2 py-1 rounded border border-gray-300 w-full text-sm"
-    />
-    <div className="flex-1 overflow-y-auto">
-      <div className="font-semibold mb-2 text-xs text-gray-500">History</div>
-      <ul className="space-y-1 text-sm">
-        <li className="text-blue-600 cursor-pointer">Two Sum</li>
-        <li className="text-gray-700 cursor-pointer">Reverse Linked List</li>
-        <li className="text-gray-700 cursor-pointer">Valid Parentheses</li>
-      </ul>
-    </div>
-    <button className="mt-4 w-full py-2 bg-blue-100 text-blue-700 rounded font-semibold text-sm">Re-analyze Batch</button>
-  </aside>
-);
+function AiFeedbackPage() {
+  const [input, setInput] = useState(initialInput);
+  const [aiResponse, setAiResponse] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-const Workspace = () => (
-  <main className="flex-1 p-8 overflow-y-auto flex flex-col">
-    <div className="font-bold text-xl mb-2">Two Sum</div>
-    <div className="flex gap-2 mb-4">
-      <span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-semibold">Array</span>
-      <span className="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-semibold">Easy</span>
-    </div>
-    <div className="mb-4 bg-gray-50 border border-gray-200 rounded p-4">
-      <div className="font-semibold mb-2">Description</div>
-      <div className="text-gray-700 text-sm max-h-24 overflow-y-auto">
-        Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.
-      </div>
-    </div>
-    <div className="mb-4 flex items-center gap-2">
-      <select className="border border-gray-300 rounded px-2 py-1 text-sm">
-        <option>C++</option>
-        <option>Python</option>
-        <option>JavaScript</option>
-      </select>
-      <button className="ml-auto px-3 py-1 bg-gray-200 rounded text-sm">Upload from LeetCode</button>
-    </div>
-    <div className="mb-4 flex-1 flex flex-col">
-      <div className="h-48 bg-gray-100 rounded flex items-center justify-center text-gray-400">[Code Editor Placeholder]</div>
-    </div>
-    <div className="flex gap-2 mt-4">
-      <button className="px-4 py-2 bg-blue-600 text-white rounded font-semibold text-sm">Submit</button>
-      <button className="px-4 py-2 bg-green-600 text-white rounded font-semibold text-sm">Analyze with AI</button>
-      <button className="px-4 py-2 bg-gray-300 text-gray-800 rounded font-semibold text-sm">Reset Code</button>
-      <button className="px-4 py-2 bg-yellow-100 text-yellow-800 rounded font-semibold text-sm">Save & Annotate</button>
-    </div>
-  </main>
-);
+  const handleChange = (e) => {
+    setInput({ ...input, [e.target.name]: e.target.value });
+  };
 
-const AIResponsePanel = () => (
-  <aside className="w-80 bg-white border-l border-gray-200 h-screen p-4 flex flex-col">
-    <div className="font-bold text-lg mb-4">AI Response Panel</div>
-    <div className="flex gap-2 mb-4">
-      <button className="px-4 py-2 rounded-t font-semibold border-b-2 border-blue-600 text-blue-700 bg-blue-50">GPT-4</button>
-      <button className="px-4 py-2 rounded-t font-semibold border-b-2 border-transparent text-gray-600 bg-gray-100">Gemini</button>
-      <button className="px-4 py-2 rounded-t font-semibold border-b-2 border-transparent text-gray-600 bg-gray-100">Claude</button>
-    </div>
-    <div className="flex-1 overflow-y-auto">
-      <div className="mb-4">
-        <div className="font-bold mb-1">Code Quality Feedback</div>
-        <div className="text-gray-700 text-sm bg-gray-50 rounded p-2">[Feedback]</div>
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setAiResponse(null);
+    try {
+      const res = await axios.post("http://localhost:3000/chat", input);
+      setAiResponse(res.data); // expects { feedback: {...}, score: {...} }
+    } catch (err) {
+      console.error('API Error:', err);
+      setAiResponse({
+        error: err.response?.data?.message || "Failed to get AI response."
+      });
+    }
+    setLoading(false);
+  };
+
+  return (
+      <div style={{ maxWidth: 800, margin: "auto", padding: 24 }}>
+        <h2>AI Feedback Input</h2>
+        <form onSubmit={handleSubmit} style={{ marginBottom: 32, display: "flex", flexDirection: "column", gap: "12px" }}>
+          <input
+              name="number"
+              placeholder="Problem Number"
+              value={input.number}
+              onChange={handleChange}
+              required
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          />
+          <input
+              name="name"
+              placeholder="Problem Name"
+              value={input.name}
+              onChange={handleChange}
+              required
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          />
+          <textarea
+              name="description"
+              placeholder="Description"
+              value={input.description}
+              onChange={handleChange}
+              required
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc", minHeight: "100px" }}
+          />
+          <input
+              name="topics"
+              placeholder="Topics (comma separated)"
+              value={input.topics}
+              onChange={handleChange}
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          />
+          <select
+              name="difficulty"
+              value={input.difficulty}
+              onChange={handleChange}
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc" }}
+          >
+              <option value="">Select Difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+          </select>
+          <textarea
+              name="code"
+              placeholder="Your Code"
+              value={input.code}
+              onChange={handleChange}
+              required
+              style={{ padding: "8px", borderRadius: "4px", border: "1px solid #ccc", minHeight: "200px", fontFamily: "monospace" }}
+          />
+          <button 
+              type="submit" 
+              disabled={loading}
+              style={{ 
+                padding: "10px", 
+                backgroundColor: loading ? "#cccccc" : "#4299e1", 
+                color: "white", 
+                border: "none", 
+                borderRadius: "4px",
+                cursor: loading ? "not-allowed" : "pointer",
+                fontWeight: "bold"
+              }}
+          >
+            {loading ? "Submitting..." : "Submit"}
+          </button>
+        </form>
+
+        {aiResponse && (
+            <div style={{ backgroundColor: "#f8f9fa", padding: "16px", borderRadius: "8px" }}>
+              {aiResponse.error ? (
+                  <div style={{ color: "red", fontWeight: "bold" }}>{aiResponse.error}</div>
+              ) : (
+                  <>
+                    <h3>AI Feedback</h3>
+                      <h2 className={"text-2xl underline"}>
+                          model: {aiResponse?.model || "N/A"}
+                      </h2>
+                    <div>
+                      <strong>Code Quality:</strong> {aiResponse?.feedback?.codeQuality || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Time Complexity:</strong> {aiResponse?.feedback?.timeComplexity || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Space Complexity:</strong> {aiResponse?.feedback?.spaceComplexity || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Better Approach:</strong> {aiResponse?.feedback?.betterApproach || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Edge Cases:</strong> {aiResponse?.feedback?.edgeCases || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Summary:</strong> {aiResponse?.feedback?.summary || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Bugs or Issues:</strong> {aiResponse?.feedback?.bugsOrIssues || "N/A"}
+                    </div>
+                    <div>
+                      <strong>Logic Walkthrough:</strong>
+                      {aiResponse?.feedback?.logicWalkthrough?.length > 0 ? (
+                        <ul>
+                          {aiResponse.feedback.logicWalkthrough.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : <span>N/A</span>}
+                    </div>
+                    <div>
+                      <strong>Optimizations:</strong>
+                      {aiResponse?.feedback?.optimizations?.length > 0 ? (
+                        <ul>
+                          {aiResponse.feedback.optimizations.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : <span>N/A</span>}
+                    </div>
+                    <div>
+                      <strong>Learning Gaps:</strong>
+                      {aiResponse?.feedback?.learningGaps?.length > 0 ? (
+                        <ul>
+                          {aiResponse.feedback.learningGaps.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : <span>N/A</span>}
+                    </div>
+                    <div>
+                      <strong>Code Smells:</strong>
+                      {aiResponse?.feedback?.codeSmells?.length > 0 ? (
+                        <ul>
+                          {aiResponse.feedback.codeSmells.map((item, idx) => (
+                              <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      ) : <span>N/A</span>}
+                    </div>
+                    <h4>Scores</h4>
+                    <div>Readability: {aiResponse?.score?.readability ?? "N/A"}</div>
+                    <div>Efficiency: {aiResponse?.score?.efficiency ?? "N/A"}</div>
+                    <div>Completeness: {aiResponse?.score?.completeness ?? "N/A"}</div>
+                    <div>Confidence: {aiResponse?.score?.confidence ?? "N/A"}</div>
+                  </>
+              )}
+            </div>
+        )}
       </div>
-      <div className="mb-4">
-        <div className="font-bold mb-1">Time/Space Analysis</div>
-        <div className="text-gray-700 text-sm bg-gray-50 rounded p-2">[Analysis]</div>
-      </div>
-      <div className="mb-4">
-        <div className="font-bold mb-1">Better Approach</div>
-        <div className="text-gray-700 text-sm bg-gray-50 rounded p-2">[Suggestions]</div>
-      </div>
-      <div className="mb-4">
-        <div className="font-bold mb-1">Edge Cases</div>
-        <div className="text-gray-700 text-sm bg-gray-50 rounded p-2">[Edge cases]</div>
-      </div>
-    </div>
-    <div className="mt-4 flex gap-2">
-      <button className="px-3 py-1 bg-gray-200 rounded text-sm">Copy</button>
-      <button className="px-3 py-1 bg-gray-200 rounded text-sm">Save</button>
-      <button className="px-3 py-1 bg-gray-200 rounded text-sm">👍</button>
-      <button className="px-3 py-1 bg-gray-200 rounded text-sm">👎</button>
-    </div>
-  </aside>
-);
+  );
+}
 
 function App() {
   return (
-    <div className="flex h-screen bg-gray-50">
-      <Sidebar />
-      <Workspace />
-      <AIResponsePanel />
-    </div>
+    <AiFeedbackPage />
   );
 }
 
