@@ -1,7 +1,7 @@
 import {Router} from "express";
-import {userController} from "../controller/user.controller.js";
-import {userInfoController} from "../controller/user-info.controller.js";
+import {codeFeedbackController} from "../controller/code-feedback.controller.js";
+import {userProfileController} from "../controller/user-profile.controller.js";
 
 export const router=Router()
-router.post('/chat',userController)
-router.post('/user-info',userInfoController)
+router.post('/chat',codeFeedbackController)
+router.post('/user-info',userProfileController)
