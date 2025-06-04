@@ -1,9 +1,9 @@
 import { GoogleGenAI } from "@google/genai";
 import {systemPrompt, userPrompt} from "../promts/gemini.promots.js";
 
-export async function main({name, description, topics, difficulty, code}) {
+export async function main(data) {
 
-    const uPrompt=userPrompt({name, description, topics, difficulty, code})
+    const uPrompt=userPrompt(data);
     const sPrompt=systemPrompt();
 
 

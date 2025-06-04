@@ -2,8 +2,8 @@ import express from 'express';
 import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import cors from 'cors';
-import {main} from "./ai-models/gemini.js";
 import {router} from "./routes/user.routes.js";
+import {main} from "./ai-models/llama.js";
 
 
 const app = express();
@@ -16,6 +16,16 @@ mongoose.connect(process.env.Mongo_URI)
         console.log("✅ connected to database");
         app.listen(process.env.PORT, () => {
             console.log(`localhost:${process.env.PORT}`);
+            // Example usage of the AI model
+            // main({
+            //     name: "Sample Problem",
+            //     description: "This is a sample problem description.",
+            //     topics: ["arrays", "strings"],
+            //     difficulty: "easy",
+            //     code: "function sample() { return 'Hello, World!'; }"
+            // }).then((response) => {
+            //     console.log("AI Response:", response);
+            // });
         });
     })
     .catch((err) => {
@@ -23,5 +33,3 @@ mongoose.connect(process.env.Mongo_URI)
         }
     )
 app.use('/',router)
-
-

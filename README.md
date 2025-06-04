@@ -50,6 +50,7 @@ project/
 ├── po backend/              # Backend Node.js application
 │   ├── ai-models/
 │   │   ├── gemini.js        # Integration with Google's Gemini AI
+│   │   ├── llama.js         # Integration with Llama AI model via Groq
 │   ├── controller/
 │   │   ├── user.controller.js # Handles the chat endpoint
 │   ├── db-model/
@@ -62,6 +63,49 @@ project/
 │   ├── index.js             # Main server file
 │   ├── package.json         # Backend dependencies and scripts
 ```
+
+## Control Flow
+
+The application follows this control flow for processing code submissions and generating AI feedback:
+
+1. **Server Initialization**:
+   - The Express server is initialized in `index.js`
+   - MongoDB connection is established
+   - CORS middleware is configured to allow cross-origin requests
+   - Routes are registered
+
+2. **API Request Handling**:
+   - Frontend sends a POST request to `/chat` endpoint with code submission details
+   - The request is routed through `user.routes.js` to the `userController` function
+
+3. **Controller Processing**:
+   - `userController` in `user.controller.js` extracts submission details from the request body
+   - The controller calls the AI model (Gemini) via the `main()` function in `gemini.js`
+
+4. **AI Model Integration**:
+   - The application supports multiple AI models:
+     - Google's Gemini model (`gemini.js`)
+     - Llama model via Groq API (`llama.js`)
+   - AI prompts are constructed using templates from `gemini.promots.js`
+   - The AI model processes the code and returns structured feedback
+
+5. **Response Processing**:
+   - The controller parses the AI response (removing markdown and converting to JSON)
+   - The submission details are stored in the database using the `Request` model
+   - The AI feedback is stored in the database using the `Response` model
+   - The processed feedback is sent back to the frontend
+
+6. **Database Operations**:
+   - `Request` model stores the code submission details
+   - `Response` model stores the AI-generated feedback and scores
+   - Both models include timestamps for tracking creation and update times
+
+7. **Error Handling**:
+   - The application includes error handling for database operations
+   - JSON parsing errors are caught and logged
+   - General error handling is implemented in the controller
+
+This flow ensures that code submissions are properly processed, analyzed by AI models, stored in the database, and returned to the user with detailed feedback.
 
 ## Installation
 
