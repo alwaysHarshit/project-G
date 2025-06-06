@@ -1,3 +1,5 @@
+import {fetchProfile} from "../utils/leetCode.js";
+
 /**
  * Controller for handling user profile requests
  * Fetches user profile and recent submissions from LeetCode
