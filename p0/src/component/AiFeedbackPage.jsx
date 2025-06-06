@@ -17,7 +17,7 @@ export function AiFeedbackPage() {
         const fetchAIResponse = async () => {
             setLoading(true);
             try {
-                const res = await axios.post("http://localhost:3000/get-response", {
+                const res = await axios.post("http://localhost:8080/get-response", {
                     questionId: submission.questionId,
                     sessionId,
                     submission

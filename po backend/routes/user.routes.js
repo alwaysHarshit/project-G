@@ -7,5 +7,5 @@ export const router=Router()
 
 // post requests
 router.post("/recent-submissions",getRecentSubmissions)
-router.post('/getUser',userProfileController)
+router.post('/get-user',userProfileController)
 router.post('/get-response',getResponse)

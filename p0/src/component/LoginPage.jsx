@@ -12,7 +12,7 @@ export function LoginPage() {
         setIsLoading(true);
         console.log("Submitted Data:", { username, sessionId });
         try {
-            const response = await fetch("http://localhost:3000/getUser", {
+            const response = await fetch("http://localhost:8080/get-user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, sessionId }),
@@ -30,7 +30,7 @@ export function LoginPage() {
                 alert("Failed to submit data. Please try again.");
             }
         } catch (e) {
-            console.error("Error:", e);
+            console.error("Error:", e.message || e.toString());
             alert("An error occurred while submitting data. Please try again.");
         } finally {
             setIsLoading(false);
