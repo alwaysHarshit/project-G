@@ -1,4 +1,4 @@
-import { fetchProfile, fetchRecentSubmissions } from "../utils/leetCode.js";
+import { fetchProfile} from "../utils/leetCode.js";
 
 /**
  * Controller for handling user profile requests

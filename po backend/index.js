@@ -3,7 +3,6 @@ import mongoose from "mongoose";
 import dotenv from 'dotenv';
 import cors from 'cors';
 import {router} from "./routes/user.routes.js";
-import {main} from "./ai-models/llama.js";
 
 
 const app = express();

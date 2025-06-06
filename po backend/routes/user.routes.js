@@ -1,5 +1,4 @@
 import {Router} from "express";
-import {aiOperations} from "../utils/ai-operations.js";
 import {userProfileController} from "../controller/user-profile.controller.js";
 import {getResponse} from "../controller/get-response.js";
 import {getRecentSubmissions} from "../controller/getRecentSumissions.js";
