@@ -1,32 +1,15 @@
 import mongoose from "mongoose";
 
-const requestSchema = new mongoose.Schema({
-    number: {
-        type: Number,
-        required: true,
-    },
-    name: {
-        type: String,
-        required: true,
-    },
-    description: {
-        type: String,
-        required: true,
-    },
-    topics:{
-        type: [String],
-        required: true,
-    },
-    difficulty: {
-        type: String,
-        enum: ['Easy', 'Medium', 'Hard'],
-        required: true,
-    },
-    code:{
-        type: String,
-        required: true,
-    }
+const submissionSchema = new mongoose.Schema({
+    problemId: { type: String, required: true },
+    problemTitle: { type: String, required: true },
+    problemStatement: { type: String, required: true },
+    difficulty: { type: String},
+    status: { type: String},
+    examples: { type: Array, default: [] },
+    code: { type: String, required: true },
+    totalTestCases: { type: Number},
+    correctTestCases: { type: Number }
+}, { timestamps: true });
 
-},{timestamps:true})
-
-export const Request= mongoose.model("Request", requestSchema);
+export const Submissions=mongoose.model("Submission", submissionSchema);

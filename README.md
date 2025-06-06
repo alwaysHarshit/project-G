@@ -2,25 +2,14 @@
 
 A full-stack application that provides AI-powered feedback on coding solutions. Users can submit their code along with problem details, and receive detailed feedback and scoring from Google's Gemini AI model.
 
-## Features
+## Updates
 
-- **Code Submission Form**: Submit coding problems with details like problem number, name, description, topics, difficulty, and your solution code
-- **AI-Powered Feedback**: Get detailed feedback on:
-  - Code quality
-  - Time and space complexity
-  - Better approaches
-  - Edge cases
-  - Bugs or issues
-  - Logic walkthrough
-  - Optimization suggestions
-  - Learning gaps
-  - Code smells
-- **Numerical Scoring**: Receive scores for:
-  - Readability (0-10)
-  - Efficiency (0-10)
-  - Completeness (0-10)
-  - Confidence (0-1)
 - **Data Persistence**: All submissions and AI responses are stored in MongoDB
+- **LeetCode Integration**: Fetches user profile and recent submissions directly from LeetCode using session ID and username
+- **Session Caching**: Recent submissions are cached in sessionStorage for faster reloads
+- **AI Feedback Page**: Detailed, structured AI feedback for each submission
+- **Error Handling**: Improved error handling and user notifications
+- **Optimized API Calls**: Reduces redundant network requests and improves performance
 
 ## Tech Stack
 
@@ -37,6 +26,7 @@ A full-stack application that provides AI-powered feedback on coding solutions. 
 - Google Gemini AI (via @google/genai)
 - CORS for cross-origin requests
 - dotenv for environment variables
+- leetcode-query for LeetCode data
 
 ## Project Structure
 
@@ -53,13 +43,21 @@ project/
 │   │   ├── llama.js         # Integration with Llama AI model via Groq
 │   ├── controller/
 │   │   ├── user.controller.js # Handles the chat endpoint
+│   │   ├── user-profile.controller.js # Handles LeetCode profile
+│   │   ├── getRecentSumissions.js # Handles recent submissions
+│   │   ├── get-response.js  # Handles AI feedback retrieval
 │   ├── db-model/
 │   │   ├── request.js       # MongoDB schema for code submissions
 │   │   ├── response.js      # MongoDB schema for AI responses
+│   │   ├── meta-analysis.js # Meta analysis schema
 │   ├── promts/
 │   │   ├── gemini.promots.js # Prompt templates for the AI
 │   ├── routes/
 │   │   ├── user.routes.js   # API route definitions
+│   ├── utils/
+│   │   ├── leetCode.js      # LeetCode data utilities
+│   │   ├── ai-operations.js # AI workflow utilities
+│   │   ├── ai-response-processor.js # AI response parsing
 │   ├── index.js             # Main server file
 │   ├── package.json         # Backend dependencies and scripts
 ```
@@ -77,10 +75,12 @@ The application follows this control flow for processing code submissions and ge
 2. **API Request Handling**:
    - Frontend sends a POST request to `/chat` endpoint with code submission details
    - The request is routed through `user.routes.js` to the `userController` function
+   - For LeetCode profile and submissions, `/getUser` and `/recent-submissions` endpoints are used
 
 3. **Controller Processing**:
    - `userController` in `user.controller.js` extracts submission details from the request body
    - The controller calls the AI model (Gemini) via the `main()` function in `gemini.js`
+   - `user-profile.controller.js` and `getRecentSumissions.js` handle LeetCode data
 
 4. **AI Model Integration**:
    - The application supports multiple AI models:
@@ -98,6 +98,7 @@ The application follows this control flow for processing code submissions and ge
 6. **Database Operations**:
    - `Request` model stores the code submission details
    - `Response` model stores the AI-generated feedback and scores
+   - `MetaAnalysis` model for future analytics features
    - Both models include timestamps for tracking creation and update times
 
 7. **Error Handling**:
@@ -105,7 +106,10 @@ The application follows this control flow for processing code submissions and ge
    - JSON parsing errors are caught and logged
    - General error handling is implemented in the controller
 
-This flow ensures that code submissions are properly processed, analyzed by AI models, stored in the database, and returned to the user with detailed feedback.
+8. **Frontend Optimizations**:
+   - Session caching for recent submissions
+   - Improved loading states and error messages
+   - Navigation state management for seamless user experience
 
 ## Installation
 
@@ -151,15 +155,10 @@ This flow ensures that code submissions are properly processed, analyzed by AI m
 ## Usage
 
 1. Open your browser and navigate to the frontend application (typically at http://localhost:5173)
-2. Fill out the form with:
-   - Problem number
-   - Problem name
-   - Problem description
-   - Topics (comma separated)
-   - Difficulty level
-   - Your code solution
-3. Click "Submit" to send your code for analysis
-4. View the detailed AI feedback and scores
+2. Log in with your LeetCode username and session ID
+3. View your profile and recent submissions
+4. Click "AI Analyze" on any submission to get detailed AI feedback
+5. View the structured AI report and improvement plan
 
 ## API Endpoints
 
@@ -204,6 +203,15 @@ Submits code for AI analysis
 }
 ```
 
+### POST /getUser
+Fetches LeetCode user profile
+
+### POST /recent-submissions
+Fetches recent LeetCode submissions
+
+### POST /get-response
+Fetches AI feedback for a specific submission
+
 ## Configuration
 
 ### Environment Variables
@@ -212,6 +220,21 @@ Submits code for AI analysis
 - `PORT`: The port on which the backend server runs (default: 3000)
 - `Mongo_URI`: MongoDB connection string
 - `GEMINI_KEYS`: Google Gemini API key
+
+## Upcoming Features
+
+- **Automatic AI Analysis with Redis Queue**: Submissions will be queued and processed asynchronously for scalable, real-time feedback.
+- **AI Report Download**: Users will be able to download detailed AI feedback reports as PDF or markdown.
+- **Meta Analysis Dashboard**: Visualize your coding progress, strengths, and weaknesses over time using aggregated AI feedback.
+- **Multi-Model Support**: Switch between Gemini, Llama, and other AI models for comparative analysis.
+- **Improved Error Reporting**: More descriptive error messages and troubleshooting guides.
+- **Bug Fixes & Optimizations**:
+  - Fixed session caching issues
+  - Improved API error handling
+  - Optimized database queries
+  - Enhanced frontend loading states
+  - Refactored backend controllers for maintainability
+- **More to Come**: Stay tuned for additional features like code similarity detection, leaderboard, and personalized learning plans!
 
 ## License
 

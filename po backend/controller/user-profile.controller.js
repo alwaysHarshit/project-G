@@ -10,9 +10,7 @@ export const userProfileController = async (req, res) => {
     //console.log("Received data in userProfileController:", { username, sessionId });
 
     try {
-
-        const profile = await fetchProfile(username);
-        const recentSubmissions = await fetchRecentSubmissions(sessionId, username);
+       const profile = await fetchProfile(username);
 
         if (!profile) {
             return res.status(404).json({ message: "User not found" });
@@ -22,14 +20,7 @@ export const userProfileController = async (req, res) => {
             username: profile.matchedUser.username,
             userAvatar: profile.matchedUser.profile.userAvatar,
             ranking: profile.matchedUser.profile.ranking,
-            recentSubmissions: recentSubmissions.map(submission => ({
-                questionId: submission.id,
-                url: submission.url,
-                title: submission.title,
-                status: submission.statusDisplay,
-                timestamp: submission.timestamp,
-            }))
-        };
+       };
 
         //console.log("Profile Data at controller side:", data);
 

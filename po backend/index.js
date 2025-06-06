@@ -13,7 +13,6 @@ app.use(express.json());
 
 mongoose.connect(process.env.Mongo_URI)
     .then(() => {
-        console.log("✅ connected to database");
         app.listen(process.env.PORT, () => {
             console.log(`localhost:${process.env.PORT}`);
             // Example usage of the AI model
@@ -27,9 +26,12 @@ mongoose.connect(process.env.Mongo_URI)
             //     console.log("AI Response:", response);
             // });
         });
+        console.log("✅ connected to database");
+
     })
     .catch((err) => {
             console.log("❌ mongo connection error",err);
         }
     )
+
 app.use('/',router)

@@ -50,9 +50,9 @@ export function systemPrompt() {
   },
   "ReflectiveFeedback": "Explain the user’s own approach back to them in a clearer, better, and more efficient way, including mindset adjustments and how to refine thought processes."
 }
-✅ How to Use
 
         ⚠️ Important:
+        - bug fixes and improvements should be in the string .
         - Your tone should be direct and technical.
         - Do not include extra text outside the JSON block.
         - Avoid generic phrases. Be specific.

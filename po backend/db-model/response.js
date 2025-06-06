@@ -1,32 +1,21 @@
 import mongoose from "mongoose";
 
-const responseSchema = new mongoose.Schema({
-    questionId: {type: mongoose.Schema.Types.ObjectId, ref: "requestSchema", required: true},
-    model: {type: String, default: "Gemini"},
-
-    feedback: {
-        codeQuality: String,
-        timeComplexity: String,
-        spaceComplexity: String,
-        betterApproach: String,
-        edgeCases: String,
-        summary: String,
-        bugsOrIssues: String,
-        logicWalkthrough: [String],
-        optimizations: [String],
-        learningGaps: [String],
-        codeSmells: [String],
+const aiFeedbackSchema = new mongoose.Schema({
+    llm: {type: String, default: "gemini-2.0-flash"},
+    submissionId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Submission",
+        required: true,
+        unique: true
     },
-
-    score: {
-        readability: Number,    // 0–10
-        efficiency: Number,     // 0–10
-        completeness: Number,   // 0–10
-        confidence: Number      // 0–1 or 0–100
+    sessionId: {
+        type: String,
     },
+    response: {
+        type: mongoose.Schema.Types.Mixed, // accepts any valid object
+        required: true
+    },
+    responseVersion:{type:String,default:"2.0"},
+}, { timestamps: true });
 
-    versionTag: {type: String, default: "v1.0"}
-
-}, {timestamps: true});
-
-export const Response=mongoose.model("Response", responseSchema);
+export const AiFeedbacks=mongoose.model("AiFeedback", aiFeedbackSchema);

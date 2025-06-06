@@ -1,7 +1,12 @@
 import {Router} from "express";
-import {codeFeedbackController} from "../controller/code-feedback.controller.js";
+import {aiOperations} from "../utils/ai-operations.js";
 import {userProfileController} from "../controller/user-profile.controller.js";
+import {getResponse} from "../controller/get-response.js";
+import {getRecentSubmissions} from "../controller/getRecentSumissions.js";
 
 export const router=Router()
-router.post('/chat',codeFeedbackController)
-router.post('/user-info',userProfileController)
+
+// post requests
+router.post("/recent-submissions",getRecentSubmissions)
+router.post('/getUser',userProfileController)
+router.post('/get-response',getResponse)
