@@ -7,12 +7,7 @@ import {router} from "./routes/user.routes.js";
 
 const app = express();
 dotenv.configDotenv();
-app.use(cors({
-    origin: 'http://localhost:5173',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-}));
-
+app.use(cors());
 app.use(express.json());
 
 mongoose.connect(process.env.Mongo_URI)
