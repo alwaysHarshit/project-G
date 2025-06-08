@@ -35,7 +35,7 @@ export default function DashBoard() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:8080/recent-submissions`, {
+                const response = await fetch(`https://project-g-0bcx.onrender.com/recent-submissions`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ sessionId, username }),
@@ -59,7 +59,7 @@ export default function DashBoard() {
             const intervalId = setInterval(() => {
                 console.log("⏰ 60-minute interval reached. Fetching submissions again...");
                 fetchSubmissions();
-            }, 3600000); // 60 minutes in milliseconds
+            }, 600000);
 
             return () => {
                 console.log("🧹 Cleaning up interval on component unmount");

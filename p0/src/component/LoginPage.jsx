@@ -12,7 +12,7 @@ export function LoginPage() {
         setIsLoading(true);
         console.log("Submitted Data:", { username, sessionId });
         try {
-            const response = await fetch("http://localhost:8080/get-user", {
+            const response = await fetch("https://project-g-0bcx.onrender.com/get-user", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ username, sessionId }),
