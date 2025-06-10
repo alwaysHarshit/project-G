@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import {GoogleGenAI} from "@google/genai";
 import {systemPrompt, userPrompt} from "../promts/gemini.promots.js";
 
 export async function main(data) {

@@ -40,7 +40,7 @@ export const aiOperations = async (sessionId, submissionData) => {
         console.log(" Problem saved successfully.");
 
         const aiResponse = await main(dataSendToAI);
-        //console.log("✅ AI Model Response:", aiResponse);
+        console.log("✅ AI Model Response:", aiResponse);
 
         const parsedResponse = processAIResponse(aiResponse);
         console.log("Get AI response");

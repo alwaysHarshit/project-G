@@ -1,7 +1,7 @@
-import { main } from "../ai-models/gemini.js";
-import { fetchCode } from "../utils/leetCode.js";
-import { htmlToText } from "html-to-text";
-import { processAIResponse } from "../utils/ai-response-processor.js";
+import {main} from "../ai-models/gemini.js";
+import {fetchCode} from "../utils/leetCode.js";
+import {htmlToText} from "html-to-text";
+import {processAIResponse} from "../utils/ai-response-processor.js";
 
 /**
  * Controller for handling code feedback requests

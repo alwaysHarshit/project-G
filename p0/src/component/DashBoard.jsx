@@ -8,7 +8,7 @@ export default function DashBoard() {
     const profile = state?.data;
     const username = state?.username;
 
-    const nevigate=useNavigate()
+    const nevigate = useNavigate();
 
     const [openAIReport, setOpenAIReport] = useState(null);
     const [aiReportData, setAIReportData] = useState({});
@@ -35,7 +35,7 @@ export default function DashBoard() {
                     return;
                 }
 
-                const response = await fetch(`https://project-g-0bcx.onrender.com/recent-submissions`, {
+                const response = await fetch(`https://project-g-1.onrender.com/recent-submissions`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ sessionId, username }),
@@ -57,7 +57,7 @@ export default function DashBoard() {
         if (sessionId && username && !hasFetched.current) {
             fetchSubmissions();
             const intervalId = setInterval(() => {
-                console.log("⏰ 60-minute interval reached. Fetching submissions again...");
+                console.log("⏰ 10-minute interval reached. Fetching submissions again...");
                 fetchSubmissions();
             }, 600000);
 
@@ -73,6 +73,15 @@ export default function DashBoard() {
     const handleAIAnalyze = async (submission, index) => {
         nevigate("/ai-analysis", { state: { submission,sessionId} });
     };
+
+    // Navigation handlers for About Us and Upcoming Features
+    // const handleAboutUs = () => {
+    //     nevigate("/about-us");
+    // };
+    //
+    // const handleUpcomingFeatures = () => {
+    //     nevigate("/upcoming-features");
+    // };
 
     function logout() {
         console.log("Logging out...");
@@ -111,7 +120,7 @@ export default function DashBoard() {
                         </div>
 
                     ) : recentSubmissions.length === 0 ? (
-                        <p className="text-gray-500 text-sm col-span-4 text-center">No recent submissions found.</p>
+                        <p className="text-gray-500 text-sm col-span-4 text-center">Failed to fetch submissions</p>
                     ) : (
                         recentSubmissions.map((submission, index) => (
                             <li

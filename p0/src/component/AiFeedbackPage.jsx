@@ -17,7 +17,7 @@ export function AiFeedbackPage() {
         const fetchAIResponse = async () => {
             setLoading(true);
             try {
-                const res = await axios.post("https://project-g-0bcx.onrender.com/get-response", {
+                const res = await axios.post("https://project-g-1.onrender.com/get-response", {
                     questionId: submission.questionId,
                     sessionId,
                     submission
@@ -32,19 +32,11 @@ export function AiFeedbackPage() {
                 setLoading(false);
             }
         };
-        // setAiResponse({
-        //     UserIntentAnalysis: "User Intent Analysis",
-        //     CorrectnessAnalysis: "Correctness Analysis",
-        //     WhereWentWrong: "Where Went Wrong",
-        //     BugsOrIssues: "Bugs or Issues",
-        //     TimeSpaceComplexity: {
-        //         TimeComplexity: "Time Complexity",
-        //         SpaceComplexity: "Space Complexity",
-        //         Analysis: "Analysis",
-        //     },
-        // })
-
-        fetchAIResponse();
+         fetchAIResponse().then(() => {
+             console.log(" Get AI Response:");
+         }).catch(err => {
+             console.error("Error:", err);
+         });
 
     }, [submission, sessionId]);
 
@@ -55,7 +47,7 @@ export function AiFeedbackPage() {
             {loading && <p className="text-blue-400 font-semibold">Loading AI response...</p>}
 
             {aiResponse && (
-                <div className={"bg-zinc-800 rounded-xl m-3"}>
+                <div className={"bg-zinc-800 rounded-xl m-3 shadow-md "}>
                     {aiResponse.error ? (
                         <div className={" text-3xl bg-red-700 p-5 rounded-xl"}>{aiResponse.error}</div>
                     ) : (
@@ -65,12 +57,25 @@ export function AiFeedbackPage() {
                                 <h3 className=" text-white text-xl mb-3">Response
                                     Version: {aiResponse?.responseVersion || "N/A"}</h3>
                             </div>
-                            <div className={"text-white"}><strong>User Intent Analysis:</strong> {aiResponse.response?.UserIntentAnalysis || "N/A"}</div>
-                            <div className={"text-white"}><strong>Correctness Analysis:</strong> {aiResponse.response?.CorrectnessAnalysis || "N/A"}</div>
-                            <div className={"text-white"}><strong>Where You Went Wrong:</strong> {aiResponse.response?.WhereWentWrong || "N/A"}</div>
-                            <div className={"text-white"}><strong>Bugs or Issues:</strong> {aiResponse.response?.BugsOrIssues || "N/A"}</div>
+                            <div className={"text-white bg-zinc-900 rounded-2xl p-3  mt-2"}><h2><strong>User Intent Analysis:</strong></h2> {aiResponse.response?.UserIntentAnalysis || "N/A"}</div>
+                            <div className={"text-white bg-zinc-900 rounded-2xl p-3 mt-2"}><h2><strong>Correctness Analysis:</strong></h2> {aiResponse.response?.CorrectnessAnalysis || "N/A"}</div>
+                            <div className={"text-white bg-zinc-900 rounded-2xl p-3  mt-2"}><h2><strong>Where You Went Wrong:</strong></h2> {aiResponse.response?.WhereWentWrong || "N/A"}</div>
+                            <div className="text-white bg-zinc-900 rounded-2xl p-3  mt-2">
+                                <strong>Bugs or Issues:</strong>
+                                {aiResponse.response?.BugsOrIssues?.length > 0 ? (
+                                    aiResponse.response.BugsOrIssues.map((item, index) => (
+                                        <div key={index} className="mt-2">
+                                            <p><strong>Issue:</strong> {item.Issue}</p>
+                                            <p><strong>Fix:</strong> {item.Fix}</p>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p>No bug found</p>
+                                )}
+                            </div>
 
-                            <div className={"text-white mt-4"}>
+
+                            <div className={"text-white mt-3 bg-zinc-900 rounded-2xl p-3  "}>
                                 <strong>Time & Space Complexity:</strong>
                                 <ul className="list-disc pl-6">
                                     <li><strong>Time:</strong> {aiResponse.response?.TimeSpaceComplexity?.TimeComplexity || "N/A"}</li>
@@ -79,21 +84,28 @@ export function AiFeedbackPage() {
                                 </ul>
                             </div>
 
-                            <div className="text-white mt-4">
+                            <div className="text-white mt-3 bg-zinc-900 rounded-2xl p-3 ">
                                 <strong>Alternate Solutions:</strong>
                                 {aiResponse.response?.AlternateSolutions?.length > 0 ? (
                                     <ul className="list-disc pl-6 text-white">
                                         {aiResponse.response.AlternateSolutions.map((alt, idx) => (
                                             <li key={idx}>
-                                                <strong>Approach:</strong> {alt.Approach}<br />
-                                                <strong>When To Use:</strong> {alt.WhenToUse}
+                                                <strong>Approach:</strong> {alt.Approach}<br/>
+                                                <strong>When To Use:</strong> {alt.WhenToUse}<br/>
+                                                <div>
+                                                    <strong>Code:</strong>
+                                                    <pre
+                                                        className="bg-gray-800 text-green-300 p-3 rounded-md overflow-x-auto mt-2">
+                                                        <code className="whitespace-pre-wrap">{alt.code}</code>
+                                                    </pre>
+                                                </div>
                                             </li>
                                         ))}
                                     </ul>
                                 ) : <span> N/A </span>}
                             </div>
 
-                            <div className="mt-4 text-white">
+                            <div className="mt-3 bg-zinc-900 rounded-2xl p-3  text-white">
                                 <strong>Key Concepts To Learn:</strong>
                                 {aiResponse.response?.KeyConceptsToLearn?.length > 0 ? (
                                     <ul className="list-disc pl-6">
@@ -104,30 +116,18 @@ export function AiFeedbackPage() {
                                 ) : <span> N/A </span>}
                             </div>
 
-                            <div className="mt-4 text-white">
-                                <strong>Improvement Plan:</strong>
+                            <div className="bg-zinc-900 rounded-2xl p-3  mt-2 text-white">
                                 <div>
-                                    <strong>Scores:</strong>
+                                    <h2><strong>Scores:</strong></h2>
                                     <ul>
                                         <li>Readability: {aiResponse.response?.ImprovementPlan?.Score?.Readability || "N/A"}</li>
                                         <li>Efficiency: {aiResponse.response?.ImprovementPlan?.Score?.Efficiency || "N/A"}</li>
                                         <li>Correctness: {aiResponse.response?.ImprovementPlan?.Score?.Correctness || "N/A"}</li>
-                                        <li>Confidence: {aiResponse.response?.ImprovementPlan?.Score?.Confidence || "N/A"}</li>
                                     </ul>
-                                </div>
-                                <div className="mt-2 text-white">
-                                    <strong>Action Steps:</strong>
-                                    {aiResponse.response?.ImprovementPlan?.ActionSteps?.length > 0 ? (
-                                        <ul className="list-disc pl-6">
-                                            {aiResponse.response.ImprovementPlan.ActionSteps.map((step, idx) => (
-                                                <li key={idx}>{step}</li>
-                                            ))}
-                                        </ul>
-                                    ) : <span> N/A </span>}
                                 </div>
                             </div>
 
-                            <div className="mt-4 text-white">
+                            <div className="bg-zinc-900 rounded-2xl p-3  mt-2 text-white">
                                 <strong>Reflective Feedback:</strong>
                                 <div>{aiResponse.response?.ReflectiveFeedback || "N/A"}</div>
                             </div>

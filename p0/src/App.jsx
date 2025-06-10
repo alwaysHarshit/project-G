@@ -4,7 +4,6 @@ import {AiFeedbackPage} from "./component/AiFeedbackPage.jsx";
 import DashBoard from "./component/DashBoard.jsx";
 
 
-
 function App() {
   return (
       <Router>
@@ -12,6 +11,7 @@ function App() {
               <Route path="/" element={<LoginPage/>}/>
               <Route path="/dashboard" element={<DashBoard/>}/>
               <Route path="/ai-analysis" element={<AiFeedbackPage/>}/>
+
             </Routes>
       </Router>
   );

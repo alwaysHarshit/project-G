@@ -8,7 +8,7 @@ export async function fetchRecentSubmissions(sessionId,userName) {
     const leetcode = new LeetCode(credential);
 
     try {
-        return leetcode.submissions({ limit:10, offset: 0 });
+        return leetcode.submissions({ limit:15, offset: 0 });
     } catch (error) {
         console.error("❌ Error fetching LeetCode data:", error);
         throw error;

@@ -15,7 +15,7 @@ const aiFeedbackSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.Mixed, // accepts any valid object
         required: true
     },
-    responseVersion:{type:String,default:"2.0"},
+    responseVersion:{type:String,default:"2.1"},
 }, { timestamps: true });
 
 export const AiFeedbacks=mongoose.model("AiFeedback", aiFeedbackSchema);
