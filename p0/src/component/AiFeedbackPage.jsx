@@ -17,7 +17,7 @@ export function AiFeedbackPage() {
         const fetchAIResponse = async () => {
             setLoading(true);
             try {
-                const res = await axios.post("https://project-g-1.onrender.com/get-response", {
+                const res = await axios.post("https://project-g-0bcx.onrender.com/get-response", {
                     questionId: submission.questionId,
                     sessionId,
                     submission

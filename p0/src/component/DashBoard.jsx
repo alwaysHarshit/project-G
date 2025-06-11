@@ -15,6 +15,7 @@ export default function DashBoard() {
     const [loadingIndex, setLoadingIndex] = useState(null);
     const [recentSubmissions, setRecentSubmissions] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [shouldRefetch, setShouldRefetch] = useState(false);
 
 
     const hasFetched = useRef(false); // ✅ prevents duplicate fetches after back nav
@@ -35,7 +36,7 @@ export default function DashBoard() {
                     return;
                 }
 
-                const response = await fetch(`https://project-g-1.onrender.com/recent-submissions`, {
+                const response = await fetch(`https://project-g-0bcx.onrender.com/recent-submissions`, {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ sessionId, username }),
@@ -56,37 +57,25 @@ export default function DashBoard() {
 
         if (sessionId && username && !hasFetched.current) {
             fetchSubmissions();
-            const intervalId = setInterval(() => {
-                console.log("⏰ 10-minute interval reached. Fetching submissions again...");
-                fetchSubmissions();
-            }, 600000);
-
-            return () => {
-                console.log("🧹 Cleaning up interval on component unmount");
-                clearInterval(intervalId);
-            };
         }
-    }, [sessionId, username]);
+    }, [sessionId, username, shouldRefetch]);
 
 
     // Function to call AI comment API
     const handleAIAnalyze = async (submission, index) => {
         nevigate("/ai-analysis", { state: { submission,sessionId} });
     };
-
-    // Navigation handlers for About Us and Upcoming Features
-    // const handleAboutUs = () => {
-    //     nevigate("/about-us");
-    // };
-    //
-    // const handleUpcomingFeatures = () => {
-    //     nevigate("/upcoming-features");
-    // };
-
+    // Function to handle logout
     function logout() {
         console.log("Logging out...");
         sessionStorage.removeItem("recentSubmissions");
         nevigate("/");
+    }
+    // Function to change hasFetched state and trigger refetch
+    function changeHasFetched() {
+        hasFetched.current = false;
+        sessionStorage.removeItem("recentSubmissions");
+        setShouldRefetch(prev => !prev);
     }
 
     return (
@@ -103,15 +92,18 @@ export default function DashBoard() {
                         <h1 className="text-2xl text-white font-bold font-serif ">{profile.username}</h1>
                         <p className="text-white">Ranking: #{profile.ranking}</p>
                     </div>
-                    <button onClick={logout} className={"bg-red-700 text-white px-4 py-1 rounded font-semibold shadow hover:bg-red-800 transition w-max cursor-pointer"}>
+                    <button onClick={logout} className={"bg-red-700 text-white px-4 py-1 rounded-3xl font-semibold shadow hover:bg-red-900 transition w-max cursor-pointer"}>
                         logout
                     </button>
                 </div>
             </div>
 
             {/* Recent Submissions */}
-            <div className=" w-[98%] bg-zinc-800 rounded-3xl shadow-md p-6 overflow-y-scroll custom-scroll ">
+            <div className=" w-[98%] bg-zinc-800 rounded-3xl shadow-md p-6 overflow-y-scroll custom-scroll">
+                <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-semibold font-serif mb-4 text-center text-white">Recent Submissions</h2>
+                <button onClick={changeHasFetched} className={"bg-green-500 text-center  text-white px-4 py-1 rounded-3xl font-semibold hover:bg-green-700 cursor-pointer "}>fetch latest submission</button>
+                </div>
                 <ul className={"grid grid-cols-2 gap-4"}>
                     {loading ? (
                         <div className="text-center  p-8 text-lg font-semibold text-white col-span-4 flex justify-center items-center space-x-3">
@@ -139,7 +131,7 @@ export default function DashBoard() {
                                         </a>
                                         <p className="text-sm text-gray-300">
                                             Submitted:{" "}
-                                            {new Date(submission.timestamp * 1000).toLocaleString()}
+                                            {submission.timestamp}
                                         </p>
                                     </div>
                                     <span
