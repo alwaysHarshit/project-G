@@ -7,7 +7,7 @@ import {fetchProfile} from "../utils/leetCode.js";
 export const userProfileController = async (req, res) => {
     const { username, sessionId } = req.body;
 
-    //console.log("Received data in userProfileController:", { username, sessionId });
+    console.log("Received data in userProfileController:", { username, sessionId });
 
     try {
        const profile = await fetchProfile(username);
@@ -22,11 +22,15 @@ export const userProfileController = async (req, res) => {
             ranking: profile.matchedUser.profile.ranking,
        };
 
-        //console.log("Profile Data at controller side:", data);
+        console.log("Profile Data at controller side:", data);
 
         res.status(201).json(data);
     } catch (error) {
-        console.error("❌ Error in userProfileController:", error);
+        console.error("❌ Error in userProfileController:", {
+            message: error.message,
+            stack: error.stack,
+        });
         res.status(500).json({ error: "Failed to fetch user profile" });
     }
+
 };
