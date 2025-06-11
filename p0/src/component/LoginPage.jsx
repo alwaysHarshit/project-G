@@ -37,6 +37,10 @@ export function LoginPage() {
         }
     };
 
+    function howToGetSessionId() {
+        nevigate("/how-to-get-session-id");
+    }
+
     return (
         <div className="bg-zinc-900 w-screen h-screen flex justify-center items-center">
             <form
@@ -70,20 +74,31 @@ export function LoginPage() {
                     required
                 />
 
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    className={`bg-green-500 text-white font-bold py-2 rounded transition  cursor-pointer${isLoading ? "bg-green-500 cursor-not-allowed" : "bg-emerald-950"}`}
-                >
-                    {isLoading ? (
-                        <div className="flex justify-center items-center gap-2">
-                            <span className="animate-spin border-2 border-t-transparent border-black rounded-full w-4 h-4" />
-                            Submitting...
-                        </div>
-                    ) : (
-                        "Submit"
-                    )}
-                </button>
+                <div className={"flex justify-between items-center mb-4 "}>
+                    <a
+                        onClick={howToGetSessionId}
+                        className="inline-block px-4 py-2 text-white bg-zinc-700 hover:bg-zinc-900 rounded-lg shadow transition duration-300 cursor-pointer"
+                    >
+                        🔐 Get Session ID
+                    </a>
+
+
+                    <button
+                        type="submit"
+                        disabled={isLoading}
+                        className={`bg-green-500 text-white font-bold px-2 py-1 rounded transition hover:cursor-pointer cursor-pointer${isLoading ? "bg-green-500 cursor-not-allowed" : "bg-emerald-950"}`}
+                    >
+                        {isLoading ? (
+                            <div className="flex justify-center items-center gap-2">
+                                <span className="animate-spin border-2 border-t-transparent border-black rounded-full w-4 h-4" />
+                                Submitting...
+                            </div>
+                        ) : (
+                            "Submit"
+                        )}
+                    </button>
+
+                </div>
             </form>
 
         </div>
