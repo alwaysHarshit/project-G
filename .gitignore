@@ -7,8 +7,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-p0/node_modules
-po backend/node_modules
+p.frontend/node_modules
+p.backend/node_modules
 dist
 dist-ssr
 *.local
