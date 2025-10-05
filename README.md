@@ -20,7 +20,7 @@ A full-stack application that provides AI-powered feedback on coding solutions. 
 - Axios for API requests
 
 ### Backend
-- Node.js
+- Queue.js
 - Express.js
 - MongoDB with Mongoose
 - Google Gemini AI (via @google/genai)
@@ -37,7 +37,7 @@ project/
 │   │   ├── App.jsx          # Main React component with submission form and response display
 │   ├── package.json         # Frontend dependencies and scripts
 │
-├── po backend/              # Backend Node.js application
+├── po backend/              # Backend Queue.js application
 │   ├── ai-models/
 │   │   ├── gemini.js        # Integration with Google's Gemini AI
 │   │   ├── llama.js         # Integration with Llama AI model via Groq
@@ -114,7 +114,7 @@ The application follows this control flow for processing code submissions and ge
 ## Installation
 
 ### Prerequisites
-- Node.js (v16 or higher)
+- Queue.js (v16 or higher)
 - MongoDB
 - Google Gemini API key
 
