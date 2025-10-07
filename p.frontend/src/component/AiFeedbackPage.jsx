@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import {API_BASE_URL} from "../pages/Login.page.jsx";
+import { API_BASE_URL } from "../pages/Login.page.jsx";
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { FaLightbulb, FaExclamationTriangle, FaClock, FaMemory, FaCode, FaCheckCircle, FaBrain, FaStar } from 'react-icons/fa';
 
 export function AiFeedbackPage() {
     const location = useLocation();
@@ -11,7 +13,6 @@ export function AiFeedbackPage() {
 
     const [aiResponse, setAiResponse] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [activeSection, setActiveSection] = useState(null);
 
     useEffect(() => {
         if (!submission) return;
@@ -20,15 +21,13 @@ export function AiFeedbackPage() {
             setLoading(true);
             try {
                 const res = await axios.post(`${API_BASE_URL}/get-response`, {
-
-                    questionId: submission.questionId,
                     submission
-                },{
-                        headers:{
-                            Authorization: `Bearer ${localStorage.getItem("token")}`
-                        }
-                    });
-                setAiResponse(res.data); // Expects structured feedback object
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${localStorage.getItem("token")}`
+                    }
+                });
+                setAiResponse(res.data);
             } catch (err) {
                 console.error("API Error:", err);
                 setAiResponse({
@@ -51,81 +50,83 @@ export function AiFeedbackPage() {
         navigate("/dashboard");
     };
 
-    const toggleSection = (section) => {
-        setActiveSection(activeSection === section ? null : section);
+    const Badge = ({ text, color = 'blue' }) => {
+        const colorClasses = {
+            blue: 'bg-blue-900/50 text-blue-300 border-blue-500',
+            red: 'bg-red-900/50 text-red-300 border-red-500',
+            green: 'bg-green-900/50 text-green-300 border-green-500',
+            yellow: 'bg-yellow-900/50 text-yellow-300 border-yellow-500',
+            purple: 'bg-purple-900/50 text-purple-300 border-purple-500',
+            cyan: 'bg-cyan-900/50 text-cyan-300 border-cyan-500',
+        };
+        return (
+            <span className={`inline-block px-3 py-1 text-sm font-mono rounded-full border ${colorClasses[color]}`}>
+                {text}
+            </span>
+        );
     };
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                duration: 0.5,
-                when: "beforeChildren",
-                staggerChildren: 0.1
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { y: 20, opacity: 0 },
-        visible: {
-            y: 0,
-            opacity: 1,
-            transition: { type: "spring", stiffness: 100, damping: 10 }
-        }
-    };
+    const Card = ({ title, icon, children }) => (
+        <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+            className="bg-zinc-700/30 border border-zinc-700/50 backdrop-blur-sm rounded-xl mb-4  hover:border-blue-500/50 transition-colors"
+            whileHover={{ scale: 1.03 }}
+        >
+            <div className="flex items-center p-4 border-b border-zinc-700/50">
+                {icon}
+                <h2 className="text-lg font-semibold text-gray-200 ml-3">{title}</h2>
+            </div>
+            <div className="p-5">{children}</div>
+        </motion.div>
+    );
 
     return (
         <motion.div
-            className="relative w-screen min-h-screen bg-gradient-to-br from-black via-slate-900 to-red-950 text-white overflow-auto pb-12"
+            className="min-h-screen bg-black text-white"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4 }}
         >
-
-            <div className="relative z-10 container mx-auto px-4 py-8">
+            <div className="container mx-auto px-4 py-6">
                 <motion.div
                     className="flex justify-between items-center mb-6"
                     initial={{ y: -20, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
+                    transition={{ delay: 0.1 }}
                 >
                     <motion.button
                         onClick={handleBackClick}
-                        className="bg-zinc-800/80 backdrop-blur-sm text-zinc-300 px-4 py-2 rounded-xl flex items-center shadow-lg border border-zinc-700/50 hover:bg-zinc-700/80 transition-colors"
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className="bg-zinc-800/60 text-zinc-300 px-4 py-2 rounded-lg flex items-center border border-zinc-700/50 hover:bg-zinc-700/60 transition-colors"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                         </svg>
                         Back to Dashboard
                     </motion.button>
 
-                    <motion.h1
-                        className="text-4xl font-bold font-serif text-center bg-gradient-to-r from-blue-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent"
-                        initial={{ y: -20, opacity: 0 }}
-                        animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.3 }}
-                    >
+                    <h1 className="text-3xl font-semibold font-serif text-center text-white bg-gradient-to-r from-emerald-400 to-blue-400 bg-clip-text text-transparent">
                         AI Code Analysis
-                    </motion.h1>
+                    </h1>
 
-                    <div className="w-[120px]"></div> {/* Spacer for centering */}
+                    <div className="w-[140px]"></div>
                 </motion.div>
 
                 {submission && (
                     <motion.div
-                        className="backdrop-blur-sm bg-zinc-800/80 border border-zinc-700/50 rounded-3xl shadow-xl p-6 mb-8"
-                        initial={{ y: -20, opacity: 0 }}
+                        className="bg-zinc-700/30 border border-zinc-700/50 backdrop-blur-sm rounded-xl p-3 mb-6 hover:border-blue-500/50 transition-colors"
+                        initial={{ y: -10, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        transition={{ delay: 0.4 }}
+                        transition={{ delay: 0.2 }}
+                        whileHover={{ scale: 1.01 }}
                     >
-                        <h2 className="text-2xl font-semibold text-white mb-2 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            {submission.title}
+                        <h2 className="text-xl font-semibold text-blue-400 mb-2 hover:text-blue-300 transition-colors">
+                            {submission.titleSlug || submission.title}
                         </h2>
-                        <div className="flex flex-wrap gap-4 items-center">
+                        <div className="flex flex-wrap gap-3 items-center">
                             <span className={`text-sm font-bold px-3 py-1 rounded-full ${
                                 submission.status === "Accepted"
                                     ? "bg-green-900/40 text-green-400 border border-green-700/50"
@@ -133,9 +134,14 @@ export function AiFeedbackPage() {
                             }`}>
                                 {submission.status}
                             </span>
-                            <span className="text-zinc-400">
+                            <span className="text-zinc-400 text-sm">
                                 Submitted: {submission.timestamp}
                             </span>
+                            {submission.language && (
+                                <span className="text-zinc-400 text-sm">
+                                    Language: {submission.language}
+                                </span>
+                            )}
                         </div>
                     </motion.div>
                 )}
@@ -143,567 +149,264 @@ export function AiFeedbackPage() {
                 <AnimatePresence mode="wait">
                     {loading ? (
                         <motion.div
-                            className="flex flex-col items-center justify-center py-20"
+                            className="flex flex-col items-center justify-center py-16"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             key="loading"
                         >
                             <motion.div
-                                className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full"
+                                className="w-12 h-12 border-3 border-blue-500 border-t-transparent rounded-full"
                                 animate={{ rotate: 360 }}
                                 transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
                             />
-                            <motion.p
-                                className="text-blue-400 font-semibold mt-4 text-xl"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1, transition: { delay: 0.3 } }}
-                            >
-                                Analyzing your code...
-                            </motion.p>
-                            <motion.p
-                                className="text-zinc-500 text-center max-w-md mt-2"
-                                initial={{ opacity: 0 }}
-                                animate={{ opacity: 1, transition: { delay: 0.5 } }}
-                            >
-                                Our AI is reviewing your submission to provide detailed feedback and suggestions for improvement.
-                            </motion.p>
+                            <p className="text-blue-400 font-medium mt-4">Analyzing your code...</p>
                         </motion.div>
                     ) : aiResponse?.error ? (
                         <motion.div
-                            className="backdrop-blur-sm bg-red-900/30 border border-red-700/50 rounded-3xl p-8 text-center"
-                            initial={{ scale: 0.9, opacity: 0 }}
+                            className="bg-red-900/20 border border-red-700/50 rounded-lg p-6 text-center"
+                            initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ type: "spring", stiffness: 100, damping: 15 }}
                             key="error"
                         >
-                            <motion.div
-                                className="text-red-200 text-2xl mb-4"
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 2, repeat: Infinity }}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                </svg>
-                                {aiResponse.error}
-                            </motion.div>
-                            <motion.button
-                                onClick={handleBackClick}
-                                className="bg-red-800 hover:bg-red-700 text-white px-6 py-3 rounded-xl font-semibold shadow-lg mt-4"
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                            >
-                                Return to Dashboard
-                            </motion.button>
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 mx-auto mb-4 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            <p className="text-red-200">{aiResponse.error}</p>
                         </motion.div>
-                    ) : aiResponse ? (
-                        <motion.div
-                            className="backdrop-blur-lg bg-zinc-800/80 border border-zinc-700/50 rounded-3xl shadow-2xl overflow-hidden"
-                            variants={containerVariants}
-                            initial="hidden"
-                            animate="visible"
-                            key="response"
-                        >
+                    ) : aiResponse ? (() => {
+                        // Safely extract data with fallbacks for missing fields
+                        const {
+                            MySubmissionAnalysis = {},
+                            NewApproachesAndOptimizations = {},
+                        } = aiResponse || {};
+
+                        return (
                             <motion.div
-                                className="bg-gradient-to-r from-blue-900/30 to-purple-900/30 p-6 flex flex-col md:flex-row justify-between items-center border-b border-zinc-700/50"
-                                variants={itemVariants}
+                                className="relative z-10 w-[98%] border border-zinc-700/50 rounded-3xl shadow-xl p-8 overflow-y-auto max-h-[75vh] mx-auto space-y-6"
+                                initial={{ y: 50, opacity: 0 }}
+                                animate={{ y: 0, opacity: 1 }}
+                                transition={{ type: "spring", stiffness: 100, damping: 15, delay: 0.4 }}
                             >
-                                <h3 className="text-white text-xl mb-2 md:mb-0">
-                                    Model: <span className="text-blue-400 font-semibold">{aiResponse?.llm || "N/A"}</span>
-                                </h3>
-                                <h3 className="text-white text-lg">
-                                    Version: <span className="text-purple-400 font-semibold">{aiResponse?.responseVersion || "N/A"}</span>
-                                </h3>
-                            </motion.div>
-
-                            <div className="p-6 space-y-4">
-                                {/* User Intent Analysis */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-blue-900/50 to-blue-800/50 hover:from-blue-800/50 hover:to-blue-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('intent')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
+                                {/* Summary */}
+                                {MySubmissionAnalysis?.Summary && (
+                                    <motion.div
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        transition={{ duration: 0.3 }}
+                                        className="bg-blue-900/20 border border-blue-700/50 text-blue-200 px-4 py-3 rounded-lg"
                                     >
-                                        <h2 className="text-xl font-bold text-white">User Intent Analysis</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'intent' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'intent' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.UserIntentAnalysis || "No analysis available"}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
+                                        <strong className="font-semibold">Summary: </strong>
+                                        <span>{MySubmissionAnalysis.Summary}</span>
+                                    </motion.div>
+                                )}
 
-                                {/* Correctness Analysis */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-green-900/50 to-green-800/50 hover:from-green-800/50 hover:to-green-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('correctness')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Correctness Analysis</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'correctness' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'correctness' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.CorrectnessAnalysis || "No analysis available"}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
+                                {/* My Submission Analysis */}
+                                {MySubmissionAnalysis?.ApproachUsed && (
+                                    <Card title="Your Submission Analysis" icon={<FaLightbulb className="text-yellow-400" />}>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <h3 className="font-medium text-gray-200 mb-2">Approach Used:</h3>
+                                                <Badge text={MySubmissionAnalysis.ApproachUsed.Name || "Not specified"} color="blue" />
+                                                <p className="mt-2 text-gray-400 text-sm">{MySubmissionAnalysis.ApproachUsed.Rationale || "No rationale provided."}</p>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                )}
 
-                                {/* Where You Went Wrong */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-amber-900/50 to-amber-800/50 hover:from-amber-800/50 hover:to-amber-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('wrong')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Where You Went Wrong</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'wrong' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'wrong' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.WhereWentWrong || "No analysis available"}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                {/* Bugs or Issues */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-red-900/50 to-red-800/50 hover:from-red-800/50 hover:to-red-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('bugs')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Bugs or Issues</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'bugs' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'bugs' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.BugsOrIssues?.length > 0 ? (
-                                                    <div className="space-y-4">
-                                                        {aiResponse.response.BugsOrIssues.map((item, index) => (
-                                                            <motion.div
-                                                                key={index}
-                                                                className="bg-red-900/20 border border-red-700/30 rounded-xl p-4"
-                                                                initial={{ opacity: 0, x: -10 }}
-                                                                animate={{ opacity: 1, x: 0 }}
-                                                                transition={{ delay: index * 0.1 }}
-                                                            >
-                                                                <p className="font-semibold text-red-300 mb-2">Issue: {item.Issue}</p>
-                                                                <p className="text-green-300">Fix: {item.Fix}</p>
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <p className="text-green-400">No bugs found in your code!</p>
-                                                )}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                {/* Time & Space Complexity */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-purple-900/50 to-purple-800/50 hover:from-purple-800/50 hover:to-purple-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('complexity')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Time & Space Complexity</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'complexity' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'complexity' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <ul className="space-y-2">
-                                                    <motion.li
-                                                        className="flex items-center"
+                                {/* Correctness Analysis (Conditional) */}
+                                {MySubmissionAnalysis?.CorrectnessAnalysis?.Issues?.length > 0 && (
+                                    <Card title="Issues & Corrections" icon={<FaExclamationTriangle className="text-red-400" />}>
+                                        <div className="space-y-4">
+                                            {MySubmissionAnalysis.CorrectnessAnalysis.Summary && (
+                                                <p className="text-gray-400">{MySubmissionAnalysis.CorrectnessAnalysis.Summary}</p>
+                                            )}
+                                            <div className="space-y-3">
+                                                {MySubmissionAnalysis.CorrectnessAnalysis.Issues.map((issue, index) => (
+                                                    <motion.div
+                                                        key={index}
                                                         initial={{ opacity: 0, x: -10 }}
                                                         animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.1 }}
+                                                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                                                        className="bg-zinc-700/30 p-4 border border-red-800/50 rounded-xl"
                                                     >
-                                                        <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full mr-3 font-mono">Time</span>
-                                                        {aiResponse.response?.TimeSpaceComplexity?.TimeComplexity || "N/A"}
-                                                    </motion.li>
-                                                    <motion.li
-                                                        className="flex items-center"
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.2 }}
-                                                    >
-                                                        <span className="bg-purple-900/40 text-purple-300 px-3 py-1 rounded-full mr-3 font-mono">Space</span>
-                                                        {aiResponse.response?.TimeSpaceComplexity?.SpaceComplexity || "N/A"}
-                                                    </motion.li>
-                                                    <motion.li
-                                                        className="mt-4 pt-4 border-t border-zinc-700/50"
-                                                        initial={{ opacity: 0, x: -10 }}
-                                                        animate={{ opacity: 1, x: 0 }}
-                                                        transition={{ delay: 0.3 }}
-                                                    >
-                                                        <span className="block text-purple-300 font-semibold mb-2">Analysis:</span>
-                                                        {aiResponse.response?.TimeSpaceComplexity?.Analysis || "N/A"}
-                                                    </motion.li>
-                                                </ul>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                {/* Alternate Solutions */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-indigo-900/50 to-indigo-800/50 hover:from-indigo-800/50 hover:to-indigo-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('alternate')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Alternate Solutions</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'alternate' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'alternate' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.AlternateSolutions?.length > 0 ? (
-                                                    <div className="space-y-6">
-                                                        {aiResponse.response.AlternateSolutions.map((alt, idx) => (
-                                                            <motion.div
-                                                                key={idx}
-                                                                className="bg-indigo-900/20 border border-indigo-700/30 rounded-xl p-4"
-                                                                initial={{ opacity: 0, y: 10 }}
-                                                                animate={{ opacity: 1, y: 0 }}
-                                                                transition={{ delay: idx * 0.1 }}
-                                                            >
-                                                                <h3 className="text-indigo-300 font-semibold text-lg mb-2">Approach {idx + 1}</h3>
-                                                                <p className="mb-2">{alt.Approach}</p>
-                                                                <p className="mb-4 text-amber-300"><strong>When To Use:</strong> {alt.WhenToUse}</p>
-                                                                <div>
-                                                                    <h4 className="text-indigo-300 font-semibold mb-2">Code:</h4>
-                                                                    <motion.pre
-                                                                        className="bg-zinc-950 text-green-300 p-4 rounded-xl overflow-x-auto mt-2 border border-zinc-800"
-                                                                        whileHover={{ scale: 1.01 }}
-                                                                    >
-                                                                        <code className="whitespace-pre-wrap">{alt.code}</code>
-                                                                    </motion.pre>
-                                                                </div>
-                                                            </motion.div>
-                                                        ))}
-                                                    </div>
-                                                ) : (
-                                                    <p>No alternate solutions provided.</p>
-                                                )}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                {/* Key Concepts To Learn */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-cyan-900/50 to-cyan-800/50 hover:from-cyan-800/50 hover:to-cyan-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('concepts')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Key Concepts To Learn</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'concepts' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'concepts' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                {aiResponse.response?.KeyConceptsToLearn?.length > 0 ? (
-                                                    <ul className="space-y-2">
-                                                        {aiResponse.response.KeyConceptsToLearn.map((concept, idx) => (
-                                                            <motion.li
-                                                                key={idx}
-                                                                className="bg-cyan-900/20 border border-cyan-700/30 rounded-lg p-3 flex items-start"
-                                                                initial={{ opacity: 0, x: -10 }}
-                                                                animate={{ opacity: 1, x: 0 }}
-                                                                transition={{ delay: idx * 0.1 }}
-                                                                whileHover={{ x: 5 }}
-                                                            >
-                                                                <span className="bg-cyan-800 text-cyan-200 w-6 h-6 rounded-full flex items-center justify-center mr-3 shrink-0">
-                                                                    {idx + 1}
-                                                                </span>
-                                                                {concept}
-                                                            </motion.li>
-                                                        ))}
-                                                    </ul>
-                                                ) : (
-                                                    <p>No key concepts provided.</p>
-                                                )}
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-
-                                {/* Scores */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-emerald-900/50 to-emerald-800/50 hover:from-emerald-800/50 hover:to-emerald-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('scores')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Performance Scores</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'scores' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'scores' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                                    <motion.div
-                                                        className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-4 flex flex-col items-center"
-                                                        initial={{ scale: 0.9, opacity: 0 }}
-                                                        animate={{ scale: 1, opacity: 1 }}
-                                                        transition={{ delay: 0.1 }}
-                                                    >
-                                                        <span className="text-emerald-300 text-sm uppercase tracking-wider mb-1">Readability</span>
-                                                        <span className="text-4xl font-bold text-white">{aiResponse.response?.ImprovementPlan?.Score?.Readability || "N/A"}</span>
+                                                        <Badge text={issue.Category || "Issue"} color="red" />
+                                                        <p className="mt-2 text-red-300 font-medium">{issue.Description || "No description provided."}</p>
+                                                        {issue.FixHint && (
+                                                            <div className="mt-3">
+                                                                <h4 className="text-green-400 font-medium mb-1">Fix Hint:</h4>
+                                                                <p className="text-gray-400 text-sm">{issue.FixHint}</p>
+                                                            </div>
+                                                        )}
+                                                        {issue.FailingTestCase && (
+                                                            <div className="mt-3">
+                                                                <h4 className="text-gray-100 font-medium mb-1">Failing Test:</h4>
+                                                                <pre className="bg-black/30 p-2 rounded text-sm text-gray-300">{issue.FailingTestCase}</pre>
+                                                            </div>
+                                                        )}
                                                     </motion.div>
-                                                    <motion.div
-                                                        className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-4 flex flex-col items-center"
-                                                        initial={{ scale: 0.9, opacity: 0 }}
-                                                        animate={{ scale: 1, opacity: 1 }}
-                                                        transition={{ delay: 0.2 }}
-                                                    >
-                                                        <span className="text-emerald-300 text-sm uppercase tracking-wider mb-1">Efficiency</span>
-                                                        <span className="text-4xl font-bold text-white">{aiResponse.response?.ImprovementPlan?.Score?.Efficiency || "N/A"}</span>
-                                                    </motion.div>
-                                                    <motion.div
-                                                        className="bg-emerald-900/20 border border-emerald-700/30 rounded-xl p-4 flex flex-col items-center"
-                                                        initial={{ scale: 0.9, opacity: 0 }}
-                                                        animate={{ scale: 1, opacity: 1 }}
-                                                        transition={{ delay: 0.3 }}
-                                                    >
-                                                        <span className="text-emerald-300 text-sm uppercase tracking-wider mb-1">Correctness</span>
-                                                        <span className="text-4xl font-bold text-white">{aiResponse.response?.ImprovementPlan?.Score?.Correctness || "N/A"}</span>
-                                                    </motion.div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </Card>
+                                )}
+
+                                {/* Performance Analysis */}
+                                {MySubmissionAnalysis?.PerformanceAnalysis?.TimeComplexity && MySubmissionAnalysis?.PerformanceAnalysis?.SpaceComplexity && (
+                                    <Card title="Performance Analysis" icon={<FaClock className="text-cyan-400" />}>
+                                        <div className="grid md:grid-cols-2 gap-4">
+                                            <div className="bg-zinc-700/30 p-4 rounded-xl border border-zinc-700/50 hover:border-cyan-500/50 transition-colors">
+                                                <div className="flex items-center mb-2">
+                                                    <FaClock className="text-cyan-400 mr-2" />
+                                                    <h3 className="font-medium text-gray-100">Time Complexity</h3>
                                                 </div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
+                                                <p className="font-mono text-xl text-cyan-300 mb-2">{MySubmissionAnalysis.PerformanceAnalysis.TimeComplexity.BigO || "O(?)"}</p>
+                                                <p className="text-gray-400 text-sm">{MySubmissionAnalysis.PerformanceAnalysis.TimeComplexity.Reasoning || "No reasoning provided."}</p>
+                                            </div>
+                                            <div className="bg-zinc-700/30 p-4 rounded-xl border border-zinc-700/50 hover:border-purple-500/50 transition-colors">
+                                                <div className="flex items-center mb-2">
+                                                    <FaMemory className="text-purple-400 mr-2" />
+                                                    <h3 className="font-medium text-gray-100">Space Complexity</h3>
+                                                </div>
+                                                <p className="font-mono text-xl text-purple-300 mb-2">{MySubmissionAnalysis.PerformanceAnalysis.SpaceComplexity.BigO || "O(?)"}</p>
+                                                <p className="text-gray-400 text-sm">{MySubmissionAnalysis.PerformanceAnalysis.SpaceComplexity.Reasoning || "No reasoning provided."}</p>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                )}
 
-                                {/* Reflective Feedback */}
-                                <motion.div
-                                    className="rounded-2xl overflow-hidden"
-                                    variants={itemVariants}
-                                >
-                                    <motion.button
-                                        className="w-full bg-gradient-to-r from-yellow-900/50 to-yellow-800/50 hover:from-yellow-800/50 hover:to-yellow-700/50 p-4 text-left flex justify-between items-center"
-                                        onClick={() => toggleSection('feedback')}
-                                        whileHover={{ scale: 1.01 }}
-                                        whileTap={{ scale: 0.99 }}
-                                    >
-                                        <h2 className="text-xl font-bold text-white">Reflective Feedback</h2>
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            className={`h-6 w-6 transition-transform duration-300 ${activeSection === 'feedback' ? 'rotate-180' : ''}`}
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                        </svg>
-                                    </motion.button>
-                                    <AnimatePresence>
-                                        {activeSection === 'feedback' && (
-                                            <motion.div
-                                                className="bg-zinc-900/70 p-5 text-zinc-200"
-                                                initial={{ height: 0, opacity: 0 }}
-                                                animate={{ height: "auto", opacity: 1 }}
-                                                exit={{ height: 0, opacity: 0 }}
-                                                transition={{ duration: 0.3 }}
-                                            >
-                                                <motion.div
-                                                    className="bg-yellow-900/20 border border-yellow-700/30 rounded-xl p-5"
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ delay: 0.2 }}
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-yellow-400 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                                                    </svg>
-                                                    <div className="text-zinc-200 leading-relaxed">
-                                                        {aiResponse.response?.ReflectiveFeedback || "No reflective feedback available."}
+                                {/* Problem Understanding */}
+                                {NewApproachesAndOptimizations?.ProblemUnderstanding && (
+                                    <Card title="Problem Understanding" icon={<FaBrain className="text-indigo-400" />}>
+                                        <div className="space-y-4">
+                                            {NewApproachesAndOptimizations.ProblemUnderstanding.Decoding && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Problem Decoding</h3>
+                                                    <p className="text-gray-400 text-sm border-l-2 border-indigo-500/50 pl-3">{NewApproachesAndOptimizations.ProblemUnderstanding.Decoding}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.ProblemUnderstanding.InitialIntuition && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Initial Intuition</h3>
+                                                    <p className="text-gray-400 text-sm border-l-2 border-indigo-500/50 pl-3">{NewApproachesAndOptimizations.ProblemUnderstanding.InitialIntuition}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.ProblemUnderstanding.PatternRecognition && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Pattern Recognition</h3>
+                                                    <p className="text-gray-400 text-sm border-l-2 border-indigo-500/50 pl-3">{NewApproachesAndOptimizations.ProblemUnderstanding.PatternRecognition}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Card>
+                                )}
+
+                                {/* Approach Development */}
+                                {NewApproachesAndOptimizations?.ApproachDevelopment && (
+                                    <Card title="Approach Development" icon={<FaCode className="text-orange-400" />}>
+                                        <div className="space-y-4">
+                                            {NewApproachesAndOptimizations.ApproachDevelopment.SubproblemDecomposition && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Subproblem Decomposition</h3>
+                                                    <p className="text-gray-400 text-sm">{NewApproachesAndOptimizations.ApproachDevelopment.SubproblemDecomposition}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.ApproachDevelopment.RefinementProcess && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Refinement Process</h3>
+                                                    <p className="text-gray-400 text-sm">{NewApproachesAndOptimizations.ApproachDevelopment.RefinementProcess}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.ApproachDevelopment.EdgeCaseHandling && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Edge Case Handling</h3>
+                                                    <p className="text-gray-400 text-sm">{NewApproachesAndOptimizations.ApproachDevelopment.EdgeCaseHandling}</p>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Card>
+                                )}
+
+                                {/* Optimized Solution */}
+                                {NewApproachesAndOptimizations?.OptimizationAndValidation?.OptimizedSolution && (
+                                    <Card title="Optimized Solution" icon={<FaCheckCircle className="text-green-400" />}>
+                                        <div className="space-y-4">
+                                            <div>
+                                                <h3 className="text-lg font-semibold text-green-400 mb-2">
+                                                    {NewApproachesAndOptimizations.OptimizationAndValidation.OptimizedSolution.Name || "Optimized Approach"}
+                                                </h3>
+                                                
+                                                {NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis && (
+                                                    <div className="flex flex-wrap gap-3 mb-3">
+                                                        {NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis.Time && (
+                                                            <Badge text={`Time: ${NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis.Time}`} color="cyan" />
+                                                        )}
+                                                        {NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis.Space && (
+                                                            <Badge text={`Space: ${NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis.Space}`} color="purple" />
+                                                        )}
                                                     </div>
-                                                </motion.div>
-                                            </motion.div>
-                                        )}
-                                    </AnimatePresence>
-                                </motion.div>
-                            </div>
+                                                )}
+                                                
+                                                {NewApproachesAndOptimizations.OptimizationAndValidation.OptimizedSolution.WhyBetter && (
+                                                    <p className="text-gray-400 mb-4">{NewApproachesAndOptimizations.OptimizationAndValidation.OptimizedSolution.WhyBetter}</p>
+                                                )}
+                                                
+                                                {NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis?.Reasoning && (
+                                                    <p className="text-gray-400 mb-4">{NewApproachesAndOptimizations.OptimizationAndValidation.ComplexityAnalysis.Reasoning}</p>
+                                                )}
+                                            </div>
+                                            
+                                            {NewApproachesAndOptimizations.OptimizationAndValidation.OptimizedSolution.CodeSnippet && (
+                                                <div>
+                                                    <h4 className="font-medium text-gray-100 mb-2">Code Snippet:</h4>
+                                                    <SyntaxHighlighter
+                                                        language="java"
+                                                        customStyle={{
+                                                            fontSize: '14px'
+                                                        }}
+                                                    >
+                                                        {NewApproachesAndOptimizations.OptimizationAndValidation.OptimizedSolution.CodeSnippet}
+                                                    </SyntaxHighlighter>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Card>
+                                )}
 
-                            <motion.div
-                                className="p-6 border-t border-zinc-700/50 flex justify-center"
-                                variants={itemVariants}
-                            >
-                                <motion.button
-                                    onClick={handleBackClick}
-                                    className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:from-blue-500 hover:to-purple-500 flex items-center"
-                                    whileHover={{ scale: 1.05 }}
-                                    whileTap={{ scale: 0.95 }}
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                    </svg>
-                                    Return to Dashboard
-                                </motion.button>
+                                {/* Key Insights */}
+                                {NewApproachesAndOptimizations?.InsightsAndNextSteps && (
+                                    <Card title="Key Insights & Next Steps" icon={<FaStar className="text-pink-400" />}>
+                                        <div className="space-y-4">
+                                            {NewApproachesAndOptimizations.InsightsAndNextSteps.KeyLearning && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Key Learning</h3>
+                                                    <p className="text-gray-400 text-sm">{NewApproachesAndOptimizations.InsightsAndNextSteps.KeyLearning}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.InsightsAndNextSteps.BetterThinking && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Better Thinking</h3>
+                                                    <p className="text-gray-400 text-sm">{NewApproachesAndOptimizations.InsightsAndNextSteps.BetterThinking}</p>
+                                                </div>
+                                            )}
+                                            {NewApproachesAndOptimizations.InsightsAndNextSteps.NextFocus?.length > 0 && (
+                                                <div>
+                                                    <h3 className="font-medium text-gray-100 mb-2">Next Focus Areas</h3>
+                                                    <div className="flex flex-wrap gap-2">
+                                                        {NewApproachesAndOptimizations.InsightsAndNextSteps.NextFocus.map((focus, index) => (
+                                                            <Badge key={index} text={focus} color="yellow" />
+                                                        ))}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </Card>
+                                )}
                             </motion.div>
-                        </motion.div>
-                    ) : null}
+                        );
+                    })() : null}
                 </AnimatePresence>
             </div>
         </motion.div>
     );
 }
-

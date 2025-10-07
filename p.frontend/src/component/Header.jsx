@@ -10,7 +10,7 @@ export default function Header() {
     const routes = [
         { path: "/", label: "Home"},
         ...(profile ? [{ path: "/dashboard", label: "Dashboard" }] : []), // coditonaly render the dashboard route
-        { path: "/profile", label: "Profile" },
+        { path: "/about-us", label: "About Me" },
     ];
 
 

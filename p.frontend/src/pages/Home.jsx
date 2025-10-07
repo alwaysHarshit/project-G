@@ -1,42 +1,35 @@
 // src/pages/HomePage.jsx
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Code, Rocket, ClipboardCheck, ListOrdered, Terminal, BarChart2 } from 'lucide-react';
+
+import { Rocket, Eye, BarChart2 } from "lucide-react";
 
 const features = [
     {
-        title: 'Modern UI for Codeforces',
-        description: 'Experience Codeforces in a sleek, intuitive, and responsive interface.',
-        icon: <Rocket className="text-blue-400 w-8 h-8" />,
+        title: 'AI-Powered Submission Insights',
+        description: 'Analyze each submission in real-time for correctness, efficiency, and edge case coverage.',
+        icon: <Rocket className="text-red-400 w-8 h-8" />,
     },
     {
-        title: 'Write Code in Modern Editor',
-        description: 'Use a powerful editor with syntax highlighting and auto-save.',
-        icon: <Code className="text-blue-400 w-8 h-8" />,
+        title: 'Smart Optimization Suggestions',
+        description: 'AI highlights mistakes and suggests improvements to help you evolve faster as a programmer.',
+        icon: <Rocket className="text-red-400 w-8 h-8" />,
     },
     {
-        title: 'Direct Codeforces Submission',
-        description: 'Submit your solutions directly to Codeforces using your session.',
-        icon: <Terminal className="text-blue-400 w-8 h-8" />,
+        title: 'Personalized Problem Recommendations',
+        description: 'Receive tailored challenges based on your skill level and submission history.',
+        icon: <Eye className="text-yellow-400 w-8 h-8" />,
     },
     {
-        title: 'Sorted Problem Lists',
-        description: 'Browse problems by difficulty, tags, and recent trends.',
-        icon: <ListOrdered className="text-blue-400 w-8 h-8" />,
-    },
-    {
-        title: 'Track Your Submissions',
-        description: 'View your recent submissions with verdicts and details.',
-        icon: <ClipboardCheck className="text-blue-400 w-8 h-8" />,
-    },
-    {
-        title: 'Smart Submission Analytics',
-        description: 'Analyze your submission trends, success rate, and identify weak areas.',
-        icon: <BarChart2 className="text-blue-400 w-8 h-8" />,
+        title: 'Targeted Learning Guidance',
+        description: 'Focus on weak areas in specific algorithms or data structures with strategic practice plans.',
+        icon: <Eye className="text-yellow-400 w-8 h-8" />,
     },
 ];
 
+
 export default function Home() {
+    const profile=localStorage.getItem("user-profile") ? JSON.parse(localStorage.getItem("user-profile")) : null;
     return (
         <>
             <motion.div
@@ -45,24 +38,27 @@ export default function Home() {
                 transition={{ type: "spring", stiffness: 120, damping: 20, delay: 0.1 }}
                 className="text-center max-w-3xl mx-auto mb-16"
             >
-                <h1 className="text-4xl md:text-6xl font-bold leading-tight text-slate-100 mb-4">
-                    Fixing Codeforces UI/UX
-                    <br className="hidden md:block" /> One Submission at a Time
+                <h1 className="text-4xl md:text-5xl font-bold leading-tight text-slate-100 mb-4">
+                    Master LeetCode with AI Insights
+                    <br className="hidden md:block" /> Every Submission, Smarter Than Before
                 </h1>
                 <p className="text-lg text-slate-400 mb-6">
-                    Log in with your Codeforces account and experience a modern, focused problem-solving environment.
+                    Log in with your LeetCode account and get real-time AI analysis, personalized problem recommendations, and detailed performance metrics to supercharge your coding journey.
                 </p>
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => (window.location.href = "/login")}
-                    className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-lg"
-                >
-                    Try Now
-                </motion.button>
+
+                {!profile && (
+                    <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => (window.location.href = "/login")}
+                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-lg"
+                    >
+                        Try Now
+                    </motion.button>
+                )}
             </motion.div>
 
-            <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
+            <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-2 max-w-6xl mx-auto">
                 {features.map((feature, index) => (
                     <motion.div
                         key={index}

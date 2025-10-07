@@ -4,21 +4,6 @@ import {fetchCode} from "../utils/leetCode.js";
 import {htmlToText} from "html-to-text";
 
 
-// const response = await ai.models.generateContent({
-//     model: "gemini-2.0-flash",
-//     contents: [
-//         {
-//             role: "system",
-//             text: ""
-//         },
-//         {
-//             role: "user",
-//             text:""
-//         }
-//     ]
-// });
-// return response.candidates[0].content.parts[0].text;
-
 export const getEdgeCases = async (req,res) => {
     const {questionId,sessionId,submission} = req.body;
     console.log("Received data in getEdgeCases:", { questionId,submission })

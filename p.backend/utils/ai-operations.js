@@ -1,78 +1,115 @@
-import {main} from "../ai-models/gemini.js";
-import {fetchCode} from "./leetCode.js";
-import {htmlToText} from "html-to-text";
-import {processAIResponse} from "./ai-response-processor.js";
-import {Submissions} from "../db-model/request.js";
-import {AiFeedbacks} from "../db-model/response.js";
 import mongoose from "mongoose";
+import { Submissions } from "../db-model/request.js";
+import { AiFeedbacks } from "../db-model/response.js";
+import { fetchCode, fetchProblem } from "../utils/leetCode.js";
+import { htmlToText } from "html-to-text";
+import { geminiResponse } from "../ai-models/gemini.js";
+import { processAIResponse } from "../utils/ai-response-processor.js";
 
-export const aiOperations = async (sessionId, submissionData) => {
+export const getResponse = async (req, res) => {
+    const { submission } = req.body;
+    const { leetCodeId } = req;
 
     const session = await mongoose.startSession();
 
     try {
-        // --- Step 2: Start the transaction on the session ---
+        // --- Start manual transaction ---
         session.startTransaction();
-        console.log("🟢 Transaction started.");
+        console.log("🟢 Transaction started");
 
-        // --- Step 3: Gather all external data (LeetCode, AI) BEFORE the final commit ---
-        const {submissions, problemStatement} = await fetchCode(
-            submissionData.questionId,
-            submissionData.title,
-            sessionId
-        );
+        // --- Step 1: Check if submission exists ---
+        let submissionFromDB = await Submissions.findOne({ submissionKey: submission.submissionID }).session(session);
+        if (submissionFromDB) {
+            const existingFeedback = await AiFeedbacks.findOne({ submissionId: submissionFromDB._id }).session(session);
+            if (!existingFeedback) {
+                throw new Error("Step 1️⃣ Error: AI feedback missing for existing submission");
+            }
+            // Commit nothing, just return existing feedback
+            await session.commitTransaction();
+            return res.status(200).json({ success: true, response: existingFeedback.response });
+        }
 
-        const htmlToTextProblemStatement = htmlToText(problemStatement.content, {
+        // --- Step 2: Fetch problem & user code from LeetCode ---
+        let pd, ud;
+        try {
+            pd = await fetchProblem(leetCodeId, submission.titleSlug);
+        } catch (err) {
+            throw new Error("Step 2️⃣ Error: Failed to fetch problem from LeetCode - " + err.message);
+        }
+
+        try {
+            ud = await fetchCode(leetCodeId, submission.submissionID);
+        } catch (err) {
+            throw new Error("Step 2️⃣ Error: Failed to fetch user code from LeetCode - " + err.message);
+        }
+
+        const htmlToTextProblemStatement = htmlToText(pd.content, {
             wordwrap: 150,
-            selectors: [{selector: "a", format: "inline"}],
+            selectors: [{ selector: "a", format: "inline" }],
         });
 
         const dataSendToAI = {
-            problemId: submissionData.questionId,
-            problemTitle: submissionData.title,
+            submissionKey: submission.submissionID,
+            status: submission.status,
+            problemTitle: pd.titleSlug,
             problemStatement: htmlToTextProblemStatement,
-            difficulty: problemStatement.difficulty,
-            status: submissionData.status,
-            examples: problemStatement.exampleTestcases,
-            code: submissions.code,
-            totalTestCases: submissions.totalTestcases,
-            correctTestCases: submissions.totalCorrect,
+            difficulty: pd.difficulty,
+            topics: pd.topicTags.map(tag => tag.name),
+            examples: pd.exampleTestcases,
+            code: ud.code,
+            totalTestCases: ud.totalTestcases,
+            correctTestCases: ud.totalCorrect,
         };
 
-        const aiResponse = await main(dataSendToAI);
-        const parsedResponse = processAIResponse(aiResponse);
-        console.log("✅ AI response processed.");
+        // --- Step 3: Send data to AI ---
+        let aiResponse;
+        try {
+            aiResponse = await geminiResponse(dataSendToAI);
+            if (!aiResponse) throw new Error("AI returned empty response");
+        } catch (err) {
+            throw new Error("Step 3️⃣ Error: AI response failed - " + err.message);
+        }
 
-        // --- Step 4: Execute database writes within the transaction ---
-        // Note: .create() expects an array of documents when using a session.
+        let parsedResponse;
+        try {
+            parsedResponse = processAIResponse(aiResponse);
+            if (!parsedResponse) throw new Error("Parsed AI response is empty");
+        } catch (err) {
+            throw new Error("Step 3️⃣ Error: Failed to parse AI response - " + err.message);
+        }
 
-        const createdSubmissions = await Submissions.create([dataSendToAI], {session});
-        const newSubmission = createdSubmissions[0]; // Get the first (and only) document
-        console.log("📄 Submission record created in transaction.");
+        // --- Step 4: Save Submission & AI Feedback ---
+        let newSubmission, newAiFeedback;
+        try {
+            newSubmission = new Submissions(dataSendToAI);
+            await newSubmission.save({ session });
+        } catch (err) {
+            throw new Error("Step 4️⃣ Error: Failed to save Submission - " + err.message);
+        }
 
-        await AiFeedbacks.create([{
-            submissionId: newSubmission._id,
-            sessionId: sessionId,
-            response: parsedResponse,
-        }], {session});
-        console.log("📄 AI Feedback record created in transaction.");
+        try {
+            newAiFeedback = new AiFeedbacks({
+                submissionId: newSubmission._id,
+                response: parsedResponse,
+            });
+            await newAiFeedback.save({ session });
+        } catch (err) {
+            throw new Error("Step 4️⃣ Error: Failed to save AI Feedback - " + err.message);
+        }
 
+        // --- Step 5: Commit transaction if everything succeeded ---
         await session.commitTransaction();
-        console.log("✅ Transaction committed successfully.");
+        console.log("✅ Transaction committed successfully");
 
-        return newSubmission;
+        return res.status(201).json({ success: true, response: parsedResponse });
 
     } catch (error) {
-
-        console.error("❌ Error during transaction, aborting...", error);
+        // --- Manual rollback ---
         await session.abortTransaction();
-
-
-        throw new Error(`Failed to process feedback request: ${error.message}`);
-
+        console.error("❌ Transaction aborted due to error:", error.message);
+        return res.status(500).json({ success: false, message: error.message });
     } finally {
-
         session.endSession();
-        console.log("⚫ Transaction session ended.");
+        console.log("⚫ Transaction session ended");
     }
 };

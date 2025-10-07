@@ -12,7 +12,9 @@ function LoginPage() {
 
     async function handleSubmit() {
         try {
-            const response = await axios.post(`${API_BASE_URL}/login`, { username, leetCodeId });
+            const response = await axios.post(`${API_BASE_URL}/login`, { username, leetCodeId },{
+                validateStatus: (status) => true // Accept all status codes, don't throw
+            });
             if(response.status===200 || response.data.success===true){
                 console.log(response.data.userData.matchedUser.profile)
                 localStorage.setItem("token", response.data.token);
@@ -24,13 +26,21 @@ function LoginPage() {
                     replace: true,
                 });
             }
+            else{
+                console.log("wooo")
+                alert("Invalid Credentials")
+                setStartClicked(false);
+                setleetcodeId("");
+                setUsername("");
+            }
         } catch (e) {
             console.error(e);
         }
     }
 
 
-    return (<div
+    return (
+        <div
         className="min-h-screen flex font-medium bg-gradient-to-br from-black via-slate-900 to-red-950 text-white overflow-hidden">
         {/* Left Glass Content Section */}
         <motion.div
@@ -66,9 +76,7 @@ function LoginPage() {
 
             <h2 className="text-4xl font-bold mb-4 text-white">Welcome Back!</h2>
             <p className="text-lg text-slate-300 max-w-md text-center">
-                Enter your Codeforces credentials to explore a cleaner, modern
-                problem-solving experience. Enjoy seamless submissions and UI
-                enhancements.
+                Enter your Leet Code credentials to Unlock the full potential of your LeetCode submissions with AI
             </p>
         </motion.div>
 
@@ -111,7 +119,7 @@ function LoginPage() {
                         onChange={(e) => setUsername(e.target.value)}
                         autoComplete="username"
                         className="w-full p-4 rounded-xl border-2 border-blue-900/30 bg-zinc-700/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
-                        placeholder="Enter your username"
+                        placeholder="Enter your Leet code username"
                         required
                     />
                 </div>
@@ -128,7 +136,7 @@ function LoginPage() {
                         value={leetCodeId}
                         onChange={(e) => setleetcodeId(e.target.value)}
                         className="w-full p-4 rounded-xl border-2 border-blue-900/30 bg-zinc-700/20 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-500"
-                        placeholder="Enter your session ID"
+                        placeholder="Enter your Leet code session ID"
                         required
                     />
 

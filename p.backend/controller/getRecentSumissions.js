@@ -1,20 +1,22 @@
 import { fetchRecentSubmissions } from "../utils/leetCode.js";
 
 export const getRecentSubmissions = async (req, res) => {
-    const {leetCodeId } = req;
+    const leetCodeId  = req.leetCodeId;
 
     try {
         // Fetch submissions
+        console.log(" Fetcheing Recent Submissions...");
         const recentSubmissions = await fetchRecentSubmissions(leetCodeId);
 
-        console.log("Recent Submissions Data...");
+
 
         // Format data for frontend
         const formattedSubmissions = recentSubmissions.map(submission => ({
-            questionId: submission.id,
-            url: submission.url,
-            title: submission.title,
+            submissionID: submission.id,
+            titleSlug: submission.titleSlug,
             status: submission.statusDisplay,
+            language:submission.lang,
+            url: submission.url,
             timestamp: new Date(submission.timestamp).toLocaleString("en-IN", {
                 day: "2-digit",
                 month: "long",

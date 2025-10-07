@@ -7,8 +7,11 @@ export const LoginController = async (req, res) => {
     try {
         const { username, leetCodeId } = req.body;
 
+        console.log(username,typeof username)
+
         // Validate the LeetCode session ID
-        if (!isValid(leetCodeId)) {
+
+        if (! await isValid(leetCodeId)) {
             console.warn(`[WARN] Invalid LeetCode ID for user: ${username}`);
             return res.status(403).json({
                 success: false,
@@ -26,7 +29,7 @@ export const LoginController = async (req, res) => {
 
         //create jwt token and send to front end
         const token = jwt.sign({ username }, process.env.JWT_SECRET, {expiresIn: "7d" })
-        const userData=await fetchProfile(username);
+        const userData=await fetchProfile(leetCodeId,username);
 
         // Successful response
         return res.status(200).json({

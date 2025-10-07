@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import User from "../db-model/User.js";
 import {isValid} from "./leetCode.js";
 
-const REVALIDATION_INTERVAL = 1000 * 60 * 60 * 24 // 24 hours
+const REVALIDATION_INTERVAL = 1000 * 60 * 60 * 72 // 3 days
 
 export const authMiddleware = async (req, res, next) => {
     try {
@@ -20,9 +20,10 @@ export const authMiddleware = async (req, res, next) => {
 
         // 4. Check LeetCode session revalidation interval
         const now = Date.now();
-        if (now - user.lastValidated > REVALIDATION_INTERVAL) {
+        if (now - user.lastValidated>REVALIDATION_INTERVAL) {
             const valid = await isValid(user.leetCodeId);
             if (!valid) {
+                console.log("❌ Returning 403: session expired");
                 return res.status(403).json({
                     success: false,
                     forceLogout: true,

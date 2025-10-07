@@ -18,14 +18,12 @@ function App() {
           <Routes>
               <Route element={<Layout/>}>
                   <Route path="/" element={<Home/>}/>
-                  <Route path="/profile" element={<ProfilePage/>}/>
-                  {/*<Route path="/profile" element={<Home/>}/>*/}
+                  <Route path="/about-us" element={<ProfilePage/>}/>
                   <Route path="/dashboard" element={<DashBoard/>}/>
               </Route>
-              <Route path="/how-to-get-session-id" element={<HowToGetSessionId/>}/>
+              <Route path="/how-to-get-session-id" element={<HowToGetSessionId/>}/>2
               <Route path="/login" element={<LoginPage/>}/>
-              <Route path="/a" element={<EdgeCasePage/>}/>
-              <Route path="/dg" element={<Header/>}/>
+              <Route path="/edge-cases" element={<EdgeCasePage/>}/>
               <Route path="/ai-analysis" element={<AiFeedbackPage/>}/>
 
             </Routes>

@@ -28,9 +28,25 @@ export default function DashBoard() {
             console.log(localStorage.getItem("token"))
             try {
                 const response = await axios.post(`${API_BASE_URL}/recent-submissions`, {},{
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                });
-                console.log("Response data..",response.data)
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem("token")}`
+                        },
+                        validateStatus: () => true // ⬅️ prevents axios from throwing automatically error in catch block
+                    }
+                );
+                //console.log(response.data);
+
+                //if leetcode is expired
+                if (response.status === 403 && response.data?.forceLogout) {
+                    alert(response.data.message);
+                    // 1. Clear auth data
+                    localStorage.clear()
+                    sessionStorage.clear();
+
+                    // 2. Redirect to login
+                    window.location.href = "/login";
+                     return;
+                }
                 setRecentSubmissions(response.data);
                 sessionStorage.setItem("recentSubmissions", JSON.stringify(response.data));
             } catch (error) {
@@ -120,7 +136,7 @@ export default function DashBoard() {
                         <ul key="submissions" className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {recentSubmissions.map((submission, index) => (
                                 <motion.li
-                                    key={submission.questionId || index}
+                                    key={submission.submissionID || index}
                                     className="p-5 border border-zinc-700/50 bg-zinc-700/30 backdrop-blur-sm rounded-xl flex flex-col gap-4 hover:border-blue-500/50 transition-colors"
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0, transition: { delay: 0.1 * index } }}
@@ -128,18 +144,10 @@ export default function DashBoard() {
                                     transition={{ type: "spring", stiffness: 400, damping: 10 }}
                                 >
                                     <div className="flex justify-between items-start">
-                                        <div>
-                                            <a
-                                                href={`https://leetcode.com${submission.url}`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="text-blue-400 text-lg font-medium hover:text-blue-300 transition-colors"
-                                            >
-                                                {submission.title}
-                                            </a>
-                                            <p className="text-sm text-zinc-400 mt-1">
-                                                Submitted: {submission.timestamp}
-                                            </p>
+                                        <div className="text-blue-400 text-lg font-medium hover:text-blue-300 transition-colors">
+                                            {submission.titleSlug}
+                                            <p className="text-sm text-zinc-400 mt-1">Submitted: {submission.timestamp}</p>
+                                            <p className="text-sm text-zinc-400 mt-1">Language: {submission.language}</p>
                                         </div>
                                         <span
                                             className={`text-sm font-bold px-3 py-1 rounded-full ${

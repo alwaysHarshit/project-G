@@ -1,23 +1,22 @@
-import JSON5 from 'json5';
+import JSON5 from "json5";
 
 export const processAIResponse = (response) => {
-    console.log("Processing AI response..." + response);
+    console.log("🧠 Processing AI response...");
     try {
-        const cleaned = response
-            // remove opening/closing code fences like ```json, ```js, ```
-            .replace(/```[\s\S]*?```/g, (match) =>
-                match.replace(/```[a-z]*\n?/gi, '').replace(/```/g, '')
-            )
-            // remove accidental double braces
-            .replace(/^\s*{\s*{/, '{')
-            .replace(/}\s*}$/, '}')
-            .trim();
+        // Convert object → string if needed
+        let text = typeof response === "object" ? JSON.stringify(response) : String(response);
 
-        console.log("Cleaned response:", cleaned);
+        // Strip Markdown fences and language identifiers like ```json
+        text = text.replace(/```[a-z]*\n?/gi, "").replace(/```/g, "").trim();
 
-        return JSON5.parse(cleaned);
+        // Step 1: Parse safely with JSON5 (handles minor formatting quirks)
+        const parsed = JSON5.parse(text);
+
+        console.log("✅ AI response parsed successfully.");
+        return parsed;
     } catch (err) {
-        console.error("Failed to parse AI response:", err.message);
-        throw new Error("Invalid JSON format in AI response.");
+        console.error("❌ Failed to parse AI response:", response);
+        console.error("📄 Parser Error:", err.message);
+        throw new Error("Invalid JSON format in AI response. Parsing failed.");
     }
 };

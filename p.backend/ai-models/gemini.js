@@ -1,7 +1,8 @@
 import {GoogleGenAI} from "@google/genai";
 import {systemPrompt, userPrompt} from "../promts/gemini.promots.js";
 
-export async function main(data) {
+export async function geminiResponse(data) {
+    console.log("Getting response from gemini .................")
 
     const uPrompt=userPrompt(data);
     const sPrompt=systemPrompt();
@@ -10,7 +11,7 @@ export async function main(data) {
     const ai = new GoogleGenAI({apiKey: process.env.GEMINI_API_KEY});
 
     const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
+        model: "gemini-2.5-flash",
         contents: [
             {
                 role: "system",
