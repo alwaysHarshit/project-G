@@ -10,20 +10,20 @@ dotenv.config(
 const app = express();
 
 //for dev purposes only
-app.use(cors());
+//app.use(cors());
 
 
 // for prod purposes only
-// app.use(cors({
-//     origin: process.env.FRONTEND_URL || 'http://localhost:5173',
-//     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-//     credentials: true
-// }));
+app.use(cors({
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    credentials: true
+}));
 
-// app.use((req, res, next) => {
-//     console.log("🟢 Incoming request from:", req.headers.origin);
-//     next();
-// });
+app.use((req, res, next) => {
+    console.log("🟢 Incoming request from:", req.headers.origin);
+    next();
+});
 
 
 app.use(express.json());
