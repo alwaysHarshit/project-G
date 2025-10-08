@@ -51,7 +51,7 @@ export default function Home() {
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => (window.location.href = "/login")}
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-lg"
+                        className="bg-blue-500 hover:bg-blue-600 transition-colors cursor-pointer text-white px-6 py-3 rounded-xl text-lg font-semibold shadow-lg "
                     >
                         Try Now
                     </motion.button>

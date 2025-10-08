@@ -50,7 +50,7 @@ export const isValid = async (sessionId) => {
 
     const leetcode = await getLeetCode(sessionId);
     const response = await leetcode.whoami();
-    console.log(response.isSignedIn,response.userId);
+    console.log("response from isValid --->>>",response);
     return response.isSignedIn && response.userId;
 };
 
