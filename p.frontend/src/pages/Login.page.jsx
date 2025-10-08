@@ -3,7 +3,8 @@ import {motion} from "framer-motion";
 import {useNavigate} from "react-router-dom";
 import axios from "axios";
 
-export const API_BASE_URL="http://localhost:3000"
+//export const API_BASE_URL="http://localhost:3000"
+export const API_BASE_URL="https://project-g-backend.onrender.com"
 function LoginPage() {
     const navigate = useNavigate();
     const [startClicked, setStartClicked] = useState(false); // this state track user's click on start btn
