@@ -1,6 +1,6 @@
 import { Credential, LeetCode } from "leetcode-query";
 
-let leetcodeInstance = null;
+
 
 /**
  * Initialize the LeetCode session (singleton)
@@ -8,12 +8,10 @@ let leetcodeInstance = null;
  * @returns {LeetCode} - Initialized LeetCode instance
  */
 export const getLeetCode = async (sessionId) => {
-    if (!leetcodeInstance) {
         const credential = new Credential();
         await credential.init(sessionId);
-        leetcodeInstance = new LeetCode(credential);
+        const leetcodeInstance = new LeetCode(credential);
         console.log("✅ LeetCode session initialized");
-    }
     return leetcodeInstance;
 };
 
