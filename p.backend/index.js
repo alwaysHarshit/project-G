@@ -21,9 +21,14 @@ app.use(cors({
 }));
 
 app.use((req, res, next) => {
-    console.log("🟢 Incoming request from:", req.headers.origin);
+    console.log("🟢 Request from:", {
+        origin: req.get("origin") || "unknown",
+        ip: req.ip,
+        path: req.path
+    });
     next();
 });
+
 
 
 app.use(express.json());
