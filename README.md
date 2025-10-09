@@ -1,241 +1,68 @@
-# Code Feedback AI
+# Code Feedback AI 🚀
 
-A full-stack application that provides AI-powered feedback on coding solutions. Users can submit their code along with problem details, and receive detailed feedback and scoring from Google's Gemini AI model.
+An intelligent full-stack application that provides AI-powered feedback on your coding solutions. Submit your code or fetch it directly from LeetCode, and receive a detailed analysis, scoring, and improvement plan from Google's Gemini AI.
 
-## Updates
+**This project is deployed and available 24/7!** Check out the live version: `https://project-g-frontend.onrender.com`
 
-- **Data Persistence**: All submissions and AI responses are stored in MongoDB
-- **LeetCode Integration**: Fetches user profile and recent submissions directly from LeetCode using session ID and username
-- **Session Caching**: Recent submissions are cached in sessionStorage for faster reloads
-- **AI Feedback Page**: Detailed, structured AI feedback for each submission
-- **Error Handling**: Improved error handling and user notifications
-- **Optimized API Calls**: Reduces redundant network requests and improves performance
+---
 
-## Tech Stack
+## ✨ Key Features
+
+-   **AI-Powered Code Analysis**: Get detailed, structured feedback on time complexity, space complexity, code optimization, and alternative approaches using Google's Gemini AI.
+-   **Direct LeetCode Integration**: Fetches your user profile and recent submissions directly from LeetCode using your username and session ID.
+-   **Persistent Authentication**: Uses **JWT tokens** for session management. Log in once, and stay logged in until your LeetCode session expires.
+-   **Modern UI/UX**: A **completely redesigned user interface** for a more intuitive and seamless experience, built on a new, more robust frontend architecture.
+-   **Data Persistence**: All submissions and AI-generated feedback are securely stored in a MongoDB database for you to review anytime.
+-   **Optimized Performance**: Session caching for faster reloads and optimized API calls to reduce redundant network requests.
+
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
-- React (v19)
-- Vite
-- Tailwind CSS
-- Axios for API requests
+-   **React (v19)** with a modern, component-based architecture
+-   **Vite** for a blazing-fast development experience
+-   **Tailwind CSS** for responsive and utility-first styling
+-   **Axios** for handling API requests
 
 ### Backend
-- Queue.js
-- Express.js
-- MongoDB with Mongoose
-- Google Gemini AI (via @google/genai)
-- CORS for cross-origin requests
-- dotenv for environment variables
-- leetcode-query for LeetCode data
+-   **Express.js** for the server framework
+-   **MongoDB** with **Mongoose** for database management
+-   **JSON Web Tokens (JWT)** for secure user authentication
+-   **Google Gemini AI** (`@google/genai`) for code analysis
+-   **CORS** for cross-origin requests
+-   **dotenv** for managing environment variables
 
-## Project Structure
+---
 
-```
-project/
-├── p0/                      # Frontend React application
-│   ├── src/
-│   │   ├── App.jsx          # Main React component with submission form and response display
-│   ├── package.json         # Frontend dependencies and scripts
-│
-├── po backend/              # Backend Queue.js application
-│   ├── ai-models/
-│   │   ├── gemini.js        # Integration with Google's Gemini AI
-│   │   ├── llama.js         # Integration with Llama AI model via Groq
-│   ├── controller/
-│   │   ├── user.controller.js # Handles the chat endpoint
-│   │   ├── user-profile.controller.js # Handles LeetCode profile
-│   │   ├── getRecentSumissions.js # Handles recent submissions
-│   │   ├── get-response.js  # Handles AI feedback retrieval
-│   ├── db-model/
-│   │   ├── request.js       # MongoDB schema for code submissions
-│   │   ├── response.js      # MongoDB schema for AI responses
-│   │   ├── meta-analysis.js # Meta analysis schema
-│   ├── promts/
-│   │   ├── gemini.promots.js # Prompt templates for the AI
-│   ├── routes/
-│   │   ├── user.routes.js   # API route definitions
-│   ├── utils/
-│   │   ├── leetCode.js      # LeetCode data utilities
-│   │   ├── ai-operations.js # AI workflow utilities
-│   │   ├── ai-response-processor.js # AI response parsing
-│   ├── index.js             # Main server file
-│   ├── package.json         # Backend dependencies and scripts
-```
+## 🚀 Getting Started
 
-## Control Flow
+1.  Open your browser and navigate to the application URL: `[Your Deployed App URL Here]`
+2.  Log in using your LeetCode username and session ID. You will remain logged in on that device.
+3.  Your LeetCode profile and recent submissions will be automatically fetched and displayed.
+4.  Click the **"AI Analyze"** button on any submission to generate a detailed feedback report.
+5.  Review your structured AI report and the personalized improvement plan!
 
-The application follows this control flow for processing code submissions and generating AI feedback:
+---
 
-1. **Server Initialization**:
-   - The Express server is initialized in `index.js`
-   - MongoDB connection is established
-   - CORS middleware is configured to allow cross-origin requests
-   - Routes are registered
+## 🔮 Upcoming Features
 
-2. **API Request Handling**:
-   - Frontend sends a POST request to `/chat` endpoint with code submission details
-   - The request is routed through `user.routes.js` to the `userController` function
-   - For LeetCode profile and submissions, `/getUser` and `/recent-submissions` endpoints are used
+-   **Generate Edge Cases**: Automatically generate tricky edge cases and test data for any given problem.
+-   **Automatic Analysis Queue**: A Redis-based queue system to process submissions asynchronously for instant, scalable feedback.
+-   **AI Report Download**: Allow users to download their detailed AI feedback reports as a PDF or Markdown file.
+-   **Meta Analysis Dashboard**: A personal dashboard to visualize your coding progress, common mistakes, and strengths over time.
+-   **Multi-Model Support**: Switch between Gemini, Llama, and other AI models for a comparative analysis of your code.
 
-3. **Controller Processing**:
-   - `userController` in `user.controller.js` extracts submission details from the request body
-   - The controller calls the AI model (Gemini) via the `main()` function in `gemini.js`
-   - `user-profile.controller.js` and `getRecentSumissions.js` handle LeetCode data
+---
 
-4. **AI Model Integration**:
-   - The application supports multiple AI models:
-     - Google's Gemini model (`gemini.js`)
-     - Llama model via Groq API (`llama.js`)
-   - AI prompts are constructed using templates from `gemini.promots.js`
-   - The AI model processes the code and returns structured feedback
+## 🤝 Contributing
 
-5. **Response Processing**:
-   - The controller parses the AI response (removing markdown and converting to JSON)
-   - The submission details are stored in the database using the `Request` model
-   - The AI feedback is stored in the database using the `Response` model
-   - The processed feedback is sent back to the frontend
+We welcome contributions and new ideas! If you want to contribute, fix a bug, or suggest a feature, please feel free to reach out by email at `studyharshit21@gmail.com`.
 
-6. **Database Operations**:
-   - `Request` model stores the code submission details
-   - `Response` model stores the AI-generated feedback and scores
-   - `MetaAnalysis` model for future analytics features
-   - Both models include timestamps for tracking creation and update times
+All contributors will be proudly featured on our "About Us" page!
 
-7. **Error Handling**:
-   - The application includes error handling for database operations
-   - JSON parsing errors are caught and logged
-   - General error handling is implemented in the controller
+---
 
-8. **Frontend Optimizations**:
-   - Session caching for recent submissions
-   - Improved loading states and error messages
-   - Navigation state management for seamless user experience
+## 📜 License
 
-## Installation
-
-### Prerequisites
-- Queue.js (v16 or higher)
-- MongoDB
-- Google Gemini API key
-
-### Frontend Setup
-1. Navigate to the frontend directory:
-   ```
-   cd p0
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Start the development server:
-   ```
-   npm run dev
-   ```
-
-### Backend Setup
-1. Navigate to the backend directory:
-   ```
-   cd "po backend"
-   ```
-2. Install dependencies:
-   ```
-   npm install
-   ```
-3. Create a `.env` file with the following variables:
-   ```
-   PORT=3000
-   Mongo_URI=your_mongodb_connection_string
-   GEMINI_KEYS=your_gemini_api_key
-   ```
-4. Start the server:
-   ```
-   npm run run
-   ```
-
-## Usage
-
-1. Open your browser and navigate to the frontend application (typically at http://localhost:5173)
-2. Log in with your LeetCode username and session ID
-3. View your profile and recent submissions
-4. Click "AI Analyze" on any submission to get detailed AI feedback
-5. View the structured AI report and improvement plan
-
-## API Endpoints
-
-### POST /chat
-Submits code for AI analysis
-
-**Request Body:**
-```json
-{
-  "number": "123",
-  "name": "Two Sum",
-  "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target.",
-  "topics": "Arrays,Hash Table",
-  "difficulty": "Easy",
-  "code": "function twoSum(nums, target) {\n  // Your code here\n}"
-}
-```
-
-**Response:**
-```json
-{
-  "model": "gemini-2.0-flash",
-  "feedback": {
-    "codeQuality": "...",
-    "timeComplexity": "...",
-    "spaceComplexity": "...",
-    "betterApproach": "...",
-    "edgeCases": "...",
-    "summary": "...",
-    "bugsOrIssues": "...",
-    "logicWalkthrough": ["..."],
-    "optimizations": ["..."],
-    "learningGaps": ["..."],
-    "codeSmells": ["..."]
-  },
-  "score": {
-    "readability": 7,
-    "efficiency": 6,
-    "completeness": 8,
-    "confidence": 0.9
-  }
-}
-```
-
-### POST /getUser
-Fetches LeetCode user profile
-
-### POST /recent-submissions
-Fetches recent LeetCode submissions
-
-### POST /get-response
-Fetches AI feedback for a specific submission
-
-## Configuration
-
-### Environment Variables
-
-#### Backend
-- `PORT`: The port on which the backend server runs (default: 3000)
-- `Mongo_URI`: MongoDB connection string
-- `GEMINI_KEYS`: Google Gemini API key
-
-## Upcoming Features
-
-- **Automatic AI Analysis with Redis Queue**: Submissions will be queued and processed asynchronously for scalable, real-time feedback.
-- **AI Report Download**: Users will be able to download detailed AI feedback reports as PDF or markdown.
-- **Meta Analysis Dashboard**: Visualize your coding progress, strengths, and weaknesses over time using aggregated AI feedback.
-- **Multi-Model Support**: Switch between Gemini, Llama, and other AI models for comparative analysis.
-- **Improved Error Reporting**: More descriptive error messages and troubleshooting guides.
-- **Bug Fixes & Optimizations**:
-  - Fixed session caching issues
-  - Improved API error handling
-  - Optimized database queries
-  - Enhanced frontend loading states
-  - Refactored backend controllers for maintainability
-- **More to Come**: Stay tuned for additional features like code similarity detection, leaderboard, and personalized learning plans!
-
-## License
-
-This project is licensed under the ISC License.
+This project is licensed under the **ISC License**.
